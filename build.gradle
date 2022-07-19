@@ -1,0 +1,127 @@
+plugins {
+    id "java"
+    id "idea"
+    //id "org.jetbrains.kotlin.jvm"
+    id "com.github.johnrengelman.shadow" version "6.1.0"
+    id "net.minecraftforge.gradle.forge"
+    id "org.spongepowered.mixin"
+    //id "com.gorylenko.gradle-git-properties" version "2.4.0"
+}
+// org.gradle.api.artifacts
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url = "https://repo.spongepowered.org/repository/maven-public/" }
+    maven { url = "https://jitpack.io/" }
+}
+
+archivesBaseName = project.archives_base_name
+version = project.mod_version
+group = project.maven_group
+
+compileJava {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    options.encoding = 'UTF-8'
+}
+//compileKotlin {
+//    kotlinOptions {
+//        jvmTarget = "1.8"
+//    }
+//}
+
+minecraft {
+    version = "1.8.9-11.15.1.2318-1.8.9"
+    runDir = "run"
+    mappings = "stable_22"
+    makeObfSourceJar = false
+    clientJvmArgs += ["-Dfml.coreMods.load=none.spark.injection.forge.MixinLoader", "-Xmx1024m -Xms1024m"]
+}
+
+configurations {
+    include
+    implementation.extendsFrom(include)
+    runtimeOnly {
+        canBeResolved=true
+    }
+}
+
+dependencies {
+    include("org.spongepowered:mixin:0.7.11-SNAPSHOT") {
+        transitive = false
+        exclude module: "guava"
+        exclude module: "commons-io"
+        exclude module: "gson"
+        exclude module: "launchwrapper"
+        exclude module: "log4j-core"
+        exclude module: "slf4j-api"
+    }
+
+    annotationProcessor("org.spongepowered:mixin:0.7.11-SNAPSHOT")
+//    include "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    include fileTree(include: ["*.jar"], dir: "libs")
+}
+
+shadowJar {
+    archiveClassifier.set("")
+    configurations = [project.configurations.include]
+    duplicatesStrategy DuplicatesStrategy.EXCLUDE
+
+    exclude "LICENSE.txt"
+
+    exclude "META-INF/maven/**"
+    exclude "META-INF/versions/**"
+
+    exclude "org/apache/**"
+    exclude "org/junit/**"
+}
+
+processResources {
+//    from(sourceSets.main.resources.srcDirs) {
+//        include 'mcmod.info'
+//
+//        // replace version and mcversion
+//        //expand 'version':project.version, 'mcversion':mcversion
+//    }
+    //inputs.property "version", project.version
+    //inputs.property "mcversion", project.minecraft.version
+
+    // filesMatching("mcmod.info") {
+    //     expand "version": project.version, "mcversion": project.minecraft.version
+    // }
+
+    rename "(.+_at.cfg)", "META-INF/\$1"
+}
+
+jar {
+    manifest.attributes(
+        "FMLCorePlugin": "none.spark.injection.forge.MixinLoader",
+        "FMLCorePluginContainsFMLMod": true,
+        "ForceLoadAsMod": true,
+        "MixinConfigs": "spark.forge.mixins.json",
+        "ModSide": "CLIENT",
+        "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
+        "TweakOrder": "0",
+        "FMLAT": "spark_at.cfg",
+        "Main-Class": "none.spark.SparkMain"
+    )
+
+    enabled = false
+}
+
+mixin {
+    disableRefMapWarning = true
+    defaultObfuscationEnv searge
+    add sourceSets.main, "spark.mixins.refmap.json"
+}
+
+reobf {
+    shadowJar {
+        mappingType = "SEARGE"
+    }
+}
+
+tasks.reobfJar.dependsOn(shadowJar)
+//?
+// { main { output.resourcesDir = output.classesDir } }

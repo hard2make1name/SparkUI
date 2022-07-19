@@ -1,0 +1,9 @@
+{
+	"required": true,
+	"package": "none.spark.injection.forge.mixins",
+	"refmap": "spark.mixins.refmap.json",
+	"compatibilityLevel": "JAVA_8",
+	"mixins": [
+		"client.MixinMinecraft"
+	]
+}
