@@ -1,7 +1,7 @@
 # SparkUI
-A Mod that beautifies and optimizes Minecraft client.
 ![code size](https://img.shields.io/github/languages/code-size/hard2make1name/SparkUI)
 ![code lines](https://img.shields.io/tokei/lines/github/hard2make1name/SparkUI)
+A Mod that beautifies and optimizes Minecraft client.  
 
 ## License
 WTFPL!  
