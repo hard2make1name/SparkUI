@@ -1,19 +1,17 @@
 pluginManagement {
     repositories {
-        mavenCentral()
-        gradlePluginPortal()
         maven { url = "https://repo.spongepowered.org/repository/maven-public/" }
+        maven { url = "https://repo.spongepowered.org/repository/forge-proxy/" }
         maven { url = "https://maven.minecraftforge.net/" }
         maven { url = "https://jitpack.io/" }
-        
+        mavenCentral()
+        gradlePluginPortal()
     }
     resolutionStrategy {
         eachPlugin {
             switch (requested.id.id) {
                 case "net.minecraftforge.gradle.forge":
-                    //useModule("none.mcdev:ForgeGradle:d74a198")
                     useModule("com.github.hard2make1name:ForgeGradle:e6821690")
-                    //useModule("com.github.xcfrg:ForgeGradle:${forgegradle_version}")
                     break
                 case "org.spongepowered.mixin":
                     useModule("com.github.xcfrg:mixingradle:ae2a80e")

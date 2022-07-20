@@ -10,9 +10,10 @@ plugins {
 // org.gradle.api.artifacts
 repositories {
     mavenLocal()
-    mavenCentral()
     maven { url = "https://repo.spongepowered.org/repository/maven-public/" }
+    maven { url = "https://repo.spongepowered.org/repository/forge-proxy/" }
     maven { url = "https://jitpack.io/" }
+    mavenCentral()
 }
 
 archivesBaseName = project.archives_base_name
