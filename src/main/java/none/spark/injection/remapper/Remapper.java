@@ -1,53 +1,45 @@
-
 package none.spark.injection.remapper;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-
-import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
-import java.io.IOException;
 
 public class Remapper {
 
-	private static HashMap<String, HashMap<String, String>> fields = new HashMap<String, HashMap<String, String>>();
-    private static HashMap<String, HashMap<String, String>> methods = new HashMap<String, HashMap<String, String>>();
+    private static final HashMap<String, HashMap<String, String>> fields = new HashMap<>();
+    private static final HashMap<String, HashMap<String, String>> methods = new HashMap<>();
 
-    public static void parseSrgByInputStream(InputStream srgInputStream) {
+    public static void parseSrg(InputStream srgInputStream) {
 
-		BufferedReader reader;
+        BufferedReader reader;
 
-		try{
-			InputStreamReader isr = new InputStreamReader(srgInputStream, "UTF-8");
-			reader = new BufferedReader(isr);
+        try {
+            InputStreamReader isr = new InputStreamReader(srgInputStream, StandardCharsets.UTF_8);
+            reader = new BufferedReader(isr);
 
-			String line = "";
+            String line;
 
-			while ((line = reader.readLine()) != null) {
-				if(line.startsWith("FD:")){
-					String[] args = line.split(" ");
-					String name = args[1];
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("FD:")) {
+                    String[] args = line.split(" ");
+                    String name = args[1];
                     String srg = args[2];
 
                     String className = name.substring(0, name.lastIndexOf('/')).replace('/', '.');
                     String fieldName = name.substring(name.lastIndexOf('/') + 1);
                     String fieldSrg = srg.substring(srg.lastIndexOf('/') + 1);
 
-                    if(!fields.containsKey(className)){
-                        fields.put(className,new HashMap<String, String>());
+                    if (!fields.containsKey(className)) {
+                        fields.put(className, new HashMap<>());
                     }
 
-                    if(fields.containsKey(className)){
-                    	fields.get(className).put(fieldSrg, fieldName);
+                    if (fields.containsKey(className)) {
+                        fields.get(className).put(fieldSrg, fieldName);
                     }
-				}
+                }
 
-				if(line.startsWith("MD:")){
-					String[] args = line.split(" ");
+                if (line.startsWith("MD:")) {
+                    String[] args = line.split(" ");
                     String name = args[1];
                     String desc = args[2];
                     String srg = args[3];
@@ -56,30 +48,26 @@ public class Remapper {
                     String methodName = name.substring(name.lastIndexOf('/') + 1);
                     String methodSrg = srg.substring(srg.lastIndexOf('/') + 1);
 
-                    if(!methods.containsKey(className)){
-                        methods.put(className, new HashMap<String, String>());
+                    if (!methods.containsKey(className)) {
+                        methods.put(className, new HashMap<>());
                     }
 
-                    if(methods.containsKey(className)){
-                    	methods.get(className).put(methodSrg + desc, methodName);
+                    if (methods.containsKey(className)) {
+                        methods.get(className).put(methodSrg + desc, methodName);
                     }
                 }
-			}
+            }
 
-			reader.close();
-			
-		}catch(FileNotFoundException e){
-			e.printStackTrace();
-		}catch(UnsupportedEncodingException e){
-			e.printStackTrace();
-		}catch(IOException e){
-			e.printStackTrace();
-		}
-        
+            reader.close();
+            srgInputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
-    public static String remapField(Class<?> clazz, String name){
-        if(fields.containsKey(clazz.getName())){
+    public static String remapField(Class<?> clazz, String name) {
+        if (fields.containsKey(clazz.getName())) {
             return fields.get(clazz.getName()).getOrDefault(name, name);
         }
 
@@ -87,10 +75,10 @@ public class Remapper {
     }
 
     public static String remapMethod(Class<?> clazz, String name, String desc) {
-        if(methods.containsKey(clazz.getName())){
+        if (methods.containsKey(clazz.getName())) {
             return methods.get(clazz.getName()).getOrDefault(name + desc, name);
         }
-        
+
         return name;
     }
 

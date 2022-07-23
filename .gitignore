@@ -25,6 +25,9 @@ build
 .nb-gradle-properties
 
 # other
-run
 .DS_Store
 Thumbs.db
+
+# Minecraft
+run
+server

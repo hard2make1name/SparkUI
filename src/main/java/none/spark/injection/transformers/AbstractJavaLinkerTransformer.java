@@ -1,11 +1,8 @@
-
 package none.spark.injection.transformers;
 
+import net.minecraft.launchwrapper.IClassTransformer;
 import none.spark.injection.remapper.ClassUtils;
 import none.spark.injection.remapper.NodeUtils;
-
-import net.minecraft.launchwrapper.IClassTransformer;
-
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
@@ -20,10 +17,10 @@ import static org.objectweb.asm.Opcodes.*;
  */
 
 public class AbstractJavaLinkerTransformer implements IClassTransformer {
-    
+
     public static String path = "none/spark/injection/handlers/AbstractJavaLinkerHandler";
 
-     /**
+    /**
      * Transform a class
      *
      * @param name            of target class
@@ -33,13 +30,13 @@ public class AbstractJavaLinkerTransformer implements IClassTransformer {
      */
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
-        
-        if(name.equals("jdk.internal.dynalink.beans.AbstractJavaLinker")) {
+
+        if (name.equals("jdk.internal.dynalink.beans.AbstractJavaLinker")) {
             try {
                 final ClassNode classNode = ClassUtils.toClassNode(basicClass);
 
                 classNode.methods.forEach(methodNode -> {
-                    switch(methodNode.name + methodNode.desc) {
+                    switch (methodNode.name + methodNode.desc) {
                         case "addMember(Ljava/lang/String;Ljava/lang/reflect/AccessibleObject;Ljava/util/Map;)V":
                             methodNode.instructions.insertBefore(methodNode.instructions.getFirst(), NodeUtils.toNodes(
                                     new VarInsnNode(ALOAD, 0),
@@ -72,11 +69,11 @@ public class AbstractJavaLinkerTransformer implements IClassTransformer {
                 });
 
                 return ClassUtils.toBytes(classNode);
-            }catch(final Throwable throwable) {
+            } catch (final Throwable throwable) {
                 throwable.printStackTrace();
             }
         }
-        
+
         return basicClass;
     }
 

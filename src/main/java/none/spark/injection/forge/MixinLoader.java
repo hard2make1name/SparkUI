@@ -1,4 +1,3 @@
-
 package none.spark.injection.forge;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;

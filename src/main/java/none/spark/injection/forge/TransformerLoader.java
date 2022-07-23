@@ -1,9 +1,8 @@
-
 package none.spark.injection.forge;
 
-import none.spark.injection.transformers.ForgeNetworkTransformer;
-import none.spark.injection.transformers.AbstractJavaLinkerTransformer;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+import none.spark.injection.transformers.AbstractJavaLinkerTransformer;
+import none.spark.injection.transformers.ForgeNetworkTransformer;
 
 import java.util.Map;
 
@@ -16,7 +15,7 @@ public class TransformerLoader implements IFMLLoadingPlugin {
      */
     @Override
     public String[] getASMTransformerClass() {
-        return new String[] {ForgeNetworkTransformer.class.getName(), AbstractJavaLinkerTransformer.class.getName()};
+        return new String[]{ForgeNetworkTransformer.class.getName(), AbstractJavaLinkerTransformer.class.getName()};
     }
 
     /**

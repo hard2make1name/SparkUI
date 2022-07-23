@@ -4,6 +4,8 @@
 	"refmap": "spark.mixins.refmap.json",
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
-		"client.MixinMinecraft"
+		"client.MixinMinecraft",
+		"gui.MixinGuiInGame",
+		"misc.MixinFMLCommonHandler"
 	]
 }
