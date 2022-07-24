@@ -6,6 +6,7 @@
 	"mixins": [
 		"client.MixinMinecraft",
 		"gui.MixinGuiInGame",
+		"gui.MixinGuiScreen",
 		"misc.MixinFMLCommonHandler"
 	]
 }

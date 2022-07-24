@@ -1,5 +1,6 @@
 package none.spark.manager;
 
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import java.util.LinkedList;
@@ -9,7 +10,7 @@ public class GLCapStack {
     public static LinkedList<Boolean> flagStack = new LinkedList<>();
     public static LinkedList<Integer> stack = new LinkedList<>();
 
-    public static void push(int... caps) {
+    public static void push(int @NotNull ... caps) {
         for (int cap : caps) {
             stack.add(cap);
             flagStack.add(GL11.glIsEnabled(cap));

@@ -1,0 +1,42 @@
+package none.spark.manager;
+
+import none.spark.script.Script;
+
+import javax.script.ScriptException;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Objects;
+
+public class ScriptManager {
+
+    public final File scriptDir;
+    public ArrayList<Script> scripts;
+
+    public ScriptManager(File scriptDir) {
+        this.scriptDir = scriptDir;
+        this.scripts = new ArrayList<>();
+    }
+
+    public void loadScripts() {
+        for (File file : Objects.requireNonNull(this.scriptDir.listFiles())) {
+            if (file.getName().toLowerCase().endsWith(".js")) {
+                scripts.add(new Script(file));
+                System.out.println("[SparkUI] Script " + file.getName() + " loaded.");
+            }
+        }
+    }
+
+    public void runScripts() {
+        for (Script script : scripts) {
+            try {
+                script.readSourceCode();
+                script.run();
+            } catch (ScriptException e) {
+                System.err.print("\nScriptException: \n" + e.getMessage() + "\n");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}

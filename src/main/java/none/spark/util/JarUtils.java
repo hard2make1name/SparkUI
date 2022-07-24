@@ -1,4 +1,4 @@
-package none.spark.utils;
+package none.spark.util;
 
 import java.io.IOException;
 import java.io.InputStream;

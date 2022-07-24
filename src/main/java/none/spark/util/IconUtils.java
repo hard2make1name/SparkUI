@@ -1,4 +1,4 @@
-package none.spark.utils;
+package none.spark.util;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

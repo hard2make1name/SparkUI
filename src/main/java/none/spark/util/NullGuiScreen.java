@@ -1,4 +1,4 @@
-package none.spark.utils;
+package none.spark.util;
 
 import net.minecraft.client.gui.GuiScreen;
 

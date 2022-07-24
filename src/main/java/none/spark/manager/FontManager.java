@@ -16,7 +16,6 @@ public class FontManager {
     public ArrayList<GlyphPool> substituteGlyphPools;
 
     // default font renderer
-    public FontRenderer font50;
     public FontManager(File fontDir) {
         this.fontDir = fontDir;
         this.fontRenderers = new HashMap<>();
