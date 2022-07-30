@@ -3,8 +3,7 @@ package none.spark.ui.font;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import none.spark.Statics;
-import none.spark.ui.utils.RenderUtils;
-import org.jetbrains.annotations.NotNull;
+import none.spark.ui.util.RenderUtils;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -13,17 +12,17 @@ public class FontRenderer {
     public GlyphPool glyphPool;
     public boolean substitute;
 
-    public FontRenderer(@NotNull Font font) {
+    public FontRenderer(Font font) {
         this.glyphPool = new GlyphPool(font);
         this.substitute = true;
     }
 
-    public void setSubstitute(boolean flag) {
-        this.substitute = flag;
-    }
-
     public boolean getSubstitute() {
         return this.substitute;
+    }
+
+    public void setSubstitute(boolean flag) {
+        this.substitute = flag;
     }
 
     // guiScale: 0:auto 1:small 2:normal 3:large
@@ -60,7 +59,7 @@ public class FontRenderer {
 
     //for (int i = 0, len = str.codePointCount(0, str.length()); i < len; i++) {
     //            int codePoint = str.codePointAt(str.offsetByCodePoints(0, i));
-    public void drawString(@NotNull String str, int size, float x, float y) {
+    public void drawString(String str, int size, float x, float y) {
         float lineWidth = 0;
         float lineHeight = this.glyphPool.getFontMetrics(size).getHeight();
         float totalHeight = 0;
@@ -69,8 +68,7 @@ public class FontRenderer {
         GL11.glPushMatrix();
         GL11.glScalef(1.0f / scale, 1.0f / scale, 1.0f);
         int[] codePoints = str.codePoints().toArray();
-        for (int i = 0, len = codePoints.length; i < len; i++) {
-            int codePoint = codePoints[i];
+        for (int codePoint : codePoints) {
             String ch = String.valueOf(Character.toChars(codePoint));
 
             if ("\n".equals(ch)) {

@@ -27,6 +27,7 @@ build
 # other
 .DS_Store
 Thumbs.db
+.lnk
 
 # Minecraft
 run

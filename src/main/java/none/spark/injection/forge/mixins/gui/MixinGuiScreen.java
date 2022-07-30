@@ -1,4 +1,3 @@
-
 package none.spark.injection.forge.mixins.gui;
 
 import net.minecraft.client.Minecraft;
@@ -21,16 +20,12 @@ public abstract class MixinGuiScreen {
 
     @Shadow
     public Minecraft mc;
-
-    @Shadow
-    protected List<GuiButton> buttonList;
-
     @Shadow
     public int width;
-
     @Shadow
     public int height;
-
+    @Shadow
+    protected List<GuiButton> buttonList;
     @Shadow
     protected FontRenderer fontRendererObj;
 

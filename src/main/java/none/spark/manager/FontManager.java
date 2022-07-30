@@ -2,7 +2,7 @@ package none.spark.manager;
 
 import none.spark.ui.font.FontRenderer;
 import none.spark.ui.font.GlyphPool;
-import none.spark.ui.utils.FontUtils;
+import none.spark.ui.util.FontUtils;
 
 import java.awt.*;
 import java.io.File;
@@ -10,12 +10,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FontManager {
-
+    // TODO 需要优化
     public File fontDir;
     public HashMap<String, FontRenderer> fontRenderers;
     public ArrayList<GlyphPool> substituteGlyphPools;
 
-    // default font renderer
     public FontManager(File fontDir) {
         this.fontDir = fontDir;
         this.fontRenderers = new HashMap<>();
@@ -47,7 +46,7 @@ public class FontManager {
         this.fontRenderers.put(fontRendererName, new FontRenderer(getFont(fontFileName)));
     }
 
-    public void addSubstituteGlyphPool(GlyphPool glyphPool){
+    public void addSubstituteGlyphPool(GlyphPool glyphPool) {
         this.substituteGlyphPools.add(glyphPool);
     }
 }

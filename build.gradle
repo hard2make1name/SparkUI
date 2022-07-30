@@ -37,7 +37,7 @@ minecraft {
     runDir = "run"
     mappings = "stable_22"
     makeObfSourceJar = false
-    //clientJvmArgs << "--username Fest"
+    clientJvmArgs << "--username Fest"
     clientJvmArgs << "-Xmx1024m -Xms1024m"
     clientJvmArgs << "-Dfml.coreMods.load=none.spark.injection.forge.MixinLoader"
 }

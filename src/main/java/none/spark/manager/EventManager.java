@@ -1,9 +1,7 @@
-
 package none.spark.manager;
 
 import none.spark.event.Event;
 import none.spark.event.EventCallback;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +26,7 @@ public class EventManager {
         eventListeners.get(eventName).add(eventCallback);
     }
 
-    public void callEvent(@NotNull Event event) {
+    public void callEvent(Event event) {
         if (!eventListeners.containsKey(event.getName())) return;
 
         for (EventCallback eventCallback : this.eventListeners.get(event.getName())) {

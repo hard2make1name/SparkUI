@@ -6,7 +6,6 @@ import javax.script.ScriptException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class ScriptManager {
 
@@ -19,7 +18,12 @@ public class ScriptManager {
     }
 
     public void loadScripts() {
-        for (File file : Objects.requireNonNull(this.scriptDir.listFiles())) {
+        this.scripts = new ArrayList<>();
+
+        File[] files = this.scriptDir.listFiles();
+        if (files == null) return;
+
+        for (File file : files) {
             if (file.getName().toLowerCase().endsWith(".js")) {
                 scripts.add(new Script(file));
                 System.out.println("[SparkUI] Script " + file.getName() + " loaded.");

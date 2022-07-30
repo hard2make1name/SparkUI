@@ -1,13 +1,14 @@
 package none.spark.script;
 
 import net.minecraft.client.Minecraft;
-import none.spark.Statics;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class Script {
@@ -21,7 +22,7 @@ public class Script {
     }
 
     public void readSourceCode() throws IOException {
-        byte[] fileContent = new byte[(int)this.scriptFile.length()];
+        byte[] fileContent = new byte[(int) this.scriptFile.length()];
 
         FileInputStream in = new FileInputStream(this.scriptFile);
         in.read(fileContent);

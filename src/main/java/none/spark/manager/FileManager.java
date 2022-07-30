@@ -11,7 +11,7 @@ public class FileManager {
 
     public FileManager(File root) {
         this.root = root;
-        this.dirs = new HashMap<String, File>();
+        this.dirs = new HashMap<>();
     }
 
     public void addDir(String name) {

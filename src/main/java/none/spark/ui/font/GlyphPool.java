@@ -1,7 +1,7 @@
 package none.spark.ui.font;
 
-import none.spark.ui.utils.FontUtils;
-import none.spark.ui.utils.RenderUtils;
+import none.spark.ui.util.FontUtils;
+import none.spark.ui.util.RenderUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -36,22 +36,6 @@ public class GlyphPool {
         this.fonts = new HashMap<>();
         this.fontMetricses = new HashMap<>();
 
-//        for (int size : commonSize) {
-//            glyphMap.put(size, new HashMap<>());
-//        }
-//        // 初始化
-//
-//
-//        for (int size : commonSize) {
-//            this.addNewSizeFont(size);
-//        }
-//        // 预加载
-//        for (int size : commonSize) {
-//            for (int j = 0, lenj = ascii.codePointCount(0, ascii.length()); j < lenj; j++) {
-//                addGlyph(ascii.codePointAt(j), size);
-//                //glyphMap.get(size).put(codePoint, createGlyph(codePoint, size));
-//            }
-//        }
     }
 
     public boolean canDisplay(final int codePoint) {
@@ -59,7 +43,7 @@ public class GlyphPool {
     }
 
     public Glyph getGlyph(final int codePoint, final int size) {
-        if(!this.availableSize.contains(size)){
+        if (!this.availableSize.contains(size)) {
             this.addSize(size);
         }
         if (!this.glyphMap.get(size).containsKey(codePoint)) {
@@ -68,8 +52,8 @@ public class GlyphPool {
         return this.glyphMap.get(size).get(codePoint);
     }
 
-    public FontMetrics getFontMetrics(int size){
-        if(!this.availableSize.contains(size)){
+    public FontMetrics getFontMetrics(int size) {
+        if (!this.availableSize.contains(size)) {
             this.addSize(size);
         }
         return this.fontMetricses.get(size);
@@ -89,12 +73,6 @@ public class GlyphPool {
 
     public Glyph createGlyph(final int codePoint, final int size) {
         BufferedImage image = createCharImage(codePoint, size);
-//        File outputfile = new File("D:\\project\\SparkUI\\run\\SparkUI\\font\\cache\\" + codePoint + "-" + size + ".png");
-//        try {
-//            ImageIO.write(image, "png", outputfile);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }//for test
         return new Glyph(image.getWidth(), image.getHeight(), size, RenderUtils.uploadTexture(image));
     }
 

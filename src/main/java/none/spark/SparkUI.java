@@ -1,6 +1,8 @@
 package none.spark;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.shader.ShaderGroup;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -12,9 +14,14 @@ import none.spark.manager.EventManager;
 import none.spark.manager.FileManager;
 import none.spark.manager.FontManager;
 import none.spark.manager.ScriptManager;
+import none.spark.ui.UIStatics;
+import none.spark.ui.event.UIEventManager;
 import none.spark.ui.font.FontRenderer;
 import none.spark.ui.font.GlyphPool;
+import none.spark.ui.font.advanced.TextViewRenderer;
+import none.spark.ui.layer.Canvas;
 import none.spark.util.JarUtils;
+import org.lwjgl.opengl.Display;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -63,22 +70,28 @@ public class SparkUI {
         FontRenderer font1 = new FontRenderer(this.fontManager.getFont("WenQuanYiMicroHeiMono.ttf"));
         FontRenderer font2 = new FontRenderer(this.fontManager.getFont("MicrosoftYaHeiMono.ttf"));
 
+        UIStatics.glyphPool = new GlyphPool(this.fontManager.getFont("WenQuanYiMicroHeiMono.ttf"));
+        UIStatics.textViewRenderer = new TextViewRenderer();
+        UIStatics.gameCanvas = new Canvas(Display.getWidth(), Display.getHeight());
+        UIStatics.uiEventManager = new UIEventManager();
+
         this.eventManager = new EventManager();
 
         this.configureEvents();
 
         Statics.sparkUI = this;
-        Statics.font1 = font1;
-        Statics.font2 = font2;
+        UIStatics.font1 = font1;
+        UIStatics.font2 = font2;
         Statics.fontManager = this.fontManager;
         Statics.eventManager = this.eventManager;
+
         this.scriptManager = new ScriptManager(this.fileManager.getDir("scripts"));
         Statics.scriptManager = this.scriptManager;
         this.scriptManager.loadScripts();
         this.scriptManager.runScripts();
     }
 
-    public void copyFontsToLocal(){
+    public void copyFontsToLocal() {
         try {
             BufferedReader reader;
             reader = new BufferedReader(new InputStreamReader(JarUtils.getResourceInputStream("/fonts/list"), StandardCharsets.UTF_8));
@@ -97,20 +110,21 @@ public class SparkUI {
                     }
                     fos.close();
                     is.close();
-                    System.out.println("[SparkUI] " + name + " has copy to " + localFont.getAbsolutePath());
+                    System.out.println("[SparkUI] " + name + " has copied to " + localFont.getAbsolutePath());
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    public void configureEvents(){
+
+    public void configureEvents() {
         this.eventManager.addListener("cmd", new EventCallback() {
             @Override
             public <T extends Event> void callback(T _event) {
                 CommandEvent event = (CommandEvent) _event;
-                switch(event.commandName){
-                    case".reloadScripts":
+                switch (event.commandName) {
+                    case ".reloadScripts":
                         Statics.eventManager.clearEventListeners();
                         Statics.sparkUI.configureEvents();
                         Statics.scriptManager.loadScripts();
