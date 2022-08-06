@@ -1,9 +1,11 @@
 package none.spark.ui.util;
 
+import none.spark.ui.UIStatics;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
 public final class RenderUtils {
@@ -17,10 +19,10 @@ public final class RenderUtils {
         GL11.glScalef(1.0f / scale, 1.0f / scale, 1.0f);
         ...
         GL11.glPopMatrix();
-    * */
+    */
 
-    public static double _PI_divide_180 = (Math.PI / 180);
-    public static double _180_divide_PI = (180 / Math.PI);
+    public static final double _PI_divide_180 = (Math.PI / 180);
+    public static final double _180_divide_PI = (180 / Math.PI);
 
     public static int getRGB(int r, int g, int b) {
         return ((255 & 0xFF) << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | ((b & 0xFF) << 0);
@@ -47,6 +49,11 @@ public final class RenderUtils {
                 ((float) color.getBlue()) / 255.0f,
                 ((float) color.getAlpha()) / 255.0f
         );
+    }
+
+    public static void glScissorVerticalFlipped(int posX, int posY, int width, int height) {
+        // if you use original glScissor, you will notice that posY starts at the bottom of screen
+        GL11.glScissor(posX, UIStatics.gameCanvas.height - posY - height, width, height);
     }
 
     public static void drawRect(float x, float y, float x2, float y2) {
@@ -222,7 +229,8 @@ public final class RenderUtils {
         for (int i : rgb) {
             byteBuffer.putInt(i << 8 | i >> 24 & 255);
         }
-        byteBuffer.flip();
+        // Linux Open JDK 8 doesn't support byteBuffer.flip();
+        ((Buffer) byteBuffer).flip();
         return byteBuffer;
     }
 

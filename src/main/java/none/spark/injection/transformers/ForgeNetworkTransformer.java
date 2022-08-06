@@ -13,7 +13,7 @@ import static org.objectweb.asm.Opcodes.*;
  */
 public class ForgeNetworkTransformer implements IClassTransformer {
 
-    public static String path = "none/spark/injection/transformers/ForgeNetworkTransformer";
+    public static final String path = "none/spark/injection/transformers/ForgeNetworkTransformer";
 
     public static boolean returnMethod() {
         return /*AntiForge.enabled && AntiForge.blockFML && */!Minecraft.getMinecraft().isIntegratedServerRunning();

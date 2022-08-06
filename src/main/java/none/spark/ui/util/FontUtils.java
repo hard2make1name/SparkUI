@@ -23,7 +23,7 @@ public final class FontUtils {
         return fontMetrics;
     }
 
-    public static final boolean isChinese(int codePoint) {
+    public static boolean isChinese(int codePoint) {
         return Character.UnicodeScript.of(codePoint) == Character.UnicodeScript.HAN;
     }
 

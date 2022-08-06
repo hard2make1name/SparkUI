@@ -1,8 +1,6 @@
 package none.spark;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.shader.ShaderGroup;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -18,8 +16,8 @@ import none.spark.ui.UIStatics;
 import none.spark.ui.event.UIEventManager;
 import none.spark.ui.font.FontRenderer;
 import none.spark.ui.font.GlyphPool;
-import none.spark.ui.font.advanced.TextViewRenderer;
 import none.spark.ui.layer.Canvas;
+import none.spark.ui.layer.ViewRenderer;
 import none.spark.util.JarUtils;
 import org.lwjgl.opengl.Display;
 
@@ -71,7 +69,7 @@ public class SparkUI {
         FontRenderer font2 = new FontRenderer(this.fontManager.getFont("MicrosoftYaHeiMono.ttf"));
 
         UIStatics.glyphPool = new GlyphPool(this.fontManager.getFont("WenQuanYiMicroHeiMono.ttf"));
-        UIStatics.textViewRenderer = new TextViewRenderer();
+        UIStatics.viewRenderer = new ViewRenderer();
         UIStatics.gameCanvas = new Canvas(Display.getWidth(), Display.getHeight());
         UIStatics.uiEventManager = new UIEventManager();
 

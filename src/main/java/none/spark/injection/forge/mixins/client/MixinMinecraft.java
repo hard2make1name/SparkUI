@@ -1,7 +1,7 @@
 package none.spark.injection.forge.mixins.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
 import none.spark.SparkUI;
 import none.spark.Statics;
 import none.spark.ui.UIStatics;
@@ -11,7 +11,6 @@ import none.spark.util.IconUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -21,14 +20,9 @@ import java.nio.ByteBuffer;
 @Mixin(Minecraft.class)
 public abstract class MixinMinecraft {
 
-    public long lastKeyNano;
-
-    @Shadow
-    public GuiScreen currentScreen;
-
-    @Inject(method = "createDisplay", at = @At(value = "INVOKE"))
-    private void createDisplay(CallbackInfo callbackInfo) {
-        Display.setTitle("SparkUI");
+    @Inject(method = "createDisplay", at = @At(value = "INVOKE",target = "Lorg/lwjgl/opengl/Display;setTitle(Ljava/lang/String;)V", shift = At.Shift.AFTER))
+    private void mixinCreateDisplay(CallbackInfo callbackInfo) {
+        Display.setTitle("Minecraft 1.8.9 - SparkUI");
     }
 
     @Inject(method = "setWindowIcon", at = @At("HEAD"), cancellable = true)
@@ -52,9 +46,10 @@ public abstract class MixinMinecraft {
     private void resizeMixin(int width, int height, CallbackInfo callbackInfo) {
         UIStatics.gameCanvas.width = width;
         UIStatics.gameCanvas.height = height;
+        UIStatics.scale = new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
     }
 
-//    @Inject(method = "dispatchKeypresses", at = @At(value = "HEAD"))
+    //    @Inject(method = "dispatchKeypresses", at = @At(value = "HEAD"))
 //    private void onKey(CallbackInfo callbackInfo) {
 //        UIStatics.uiEventManager.onEvent(new UIKeyEvent());
 //        System.out.printf(
@@ -80,7 +75,7 @@ public abstract class MixinMinecraft {
                 , Keyboard.getEventKeyState()
                 , Keyboard.isRepeatEvent()
                 , Keyboard.getNumKeyboardEvents()
-                , String.valueOf(Keyboard.getEventNanoseconds())
+                , Keyboard.getEventNanoseconds()
         );
     }
 //    @Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/settings/KeyBinding;setKeyBindState(IZ)V"))

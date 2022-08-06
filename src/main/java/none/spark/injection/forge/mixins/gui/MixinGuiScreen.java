@@ -25,9 +25,9 @@ public abstract class MixinGuiScreen {
     @Shadow
     public int height;
     @Shadow
-    protected List<GuiButton> buttonList;
+    public List<GuiButton> buttonList;
     @Shadow
-    protected FontRenderer fontRendererObj;
+    public FontRenderer fontRendererObj;
 
     @Shadow
     public void updateScreen() {
@@ -44,7 +44,7 @@ public abstract class MixinGuiScreen {
         String prefix = ".";
 
         if (msg.startsWith(prefix) && addToChat) {
-            // 就是按 上 键可以获取上次输的命令
+            // addToChat 就是按 上 键可以获取上次输的命令
             this.mc.ingameGUI.getChatGUI().addToSentMessages(msg);
             String[] args = msg.split(" ");
 

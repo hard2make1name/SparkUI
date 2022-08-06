@@ -7,6 +7,7 @@ import none.spark.ui.util.NullGuiScreen;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("CanBeFinal")
 public class Canvas extends View {
 
     public boolean selfRender = false;
@@ -32,51 +33,5 @@ public class Canvas extends View {
         this.views.add(view);
     }
 
-    public void onEvent(UIEvent uiEvent) {
-        if(this.selfRender && uiEvent instanceof UIRender2DEvent){
-            this.render();
-        }else{
-            for (View view : this.views) {
-                if (view instanceof Canvas) {
-                    this.onEvent(((Canvas) view).getViews(), uiEvent);
-                } else {
-                    view.onEvent(uiEvent);
-                }
-            }
-        }
-    }
-
-    public void onEvent(ArrayList<View> views, UIEvent uiEvent) {
-        if(this.selfRender && uiEvent instanceof UIRender2DEvent){
-            this.render();
-        }else{
-            for (View view : views) {
-                if (view instanceof Canvas) {
-                    this.onEvent(((Canvas) view).getViews(), uiEvent);
-                } else {
-                    view.onEvent(uiEvent);
-                }
-            }
-        }
-    }
-
-    public void render() {
-        for (View view : this.views) {
-            if (view instanceof Canvas) {
-                this.render(((Canvas) view).getViews());
-            } else {
-                view.render();
-            }
-        }
-    }
-
-    public void render(ArrayList<View> views) {
-        for (View view : views) {
-            if (view instanceof Canvas) {
-                this.render(((Canvas) view).getViews());
-            } else {
-                view.render();
-            }
-        }
-    }
+    public void onEvent(UIEvent uiEvent) {}
 }

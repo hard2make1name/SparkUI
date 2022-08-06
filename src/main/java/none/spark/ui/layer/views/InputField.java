@@ -1,12 +1,8 @@
 package none.spark.ui.layer.views;
 
 import none.spark.ui.event.UIEvent;
-import none.spark.ui.event.events.UIKeyEvent;
-import none.spark.ui.event.events.UIRender2DEvent;
 import none.spark.ui.layer.View;
-import none.spark.ui.util.RenderUtils;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
@@ -38,40 +34,7 @@ public class InputField extends View {
     //System.currentTimeMillis()
 
     public InputField() {
-        this.textView.selfRender = false;
         this.textView.text = "He";
-        this.updateAttribute();
-    }
-
-    public void updateAttribute() {
-        this.textView.posX = this.posX;
-        this.textView.posY = this.posY;
-        this.textView.width = this.width;
-        this.textView.height = this.height;
-    }
-
-    //GL11.glPointSize(1.0f);
-    public void render() {
-        RenderUtils.awtColor(backgroundColor);
-        RenderUtils.drawRect(posX, posY, posX + width, posY + height);
-
-        //神秘的GL, 像素级操作
-        if (focus) {
-            GL11.glLineWidth(1.0f);
-            RenderUtils.awtColor(focusBorderColor);
-            RenderUtils.drawRectBorder(posX, posY - 1, posX + width + 1, posY + height);
-
-            GL11.glLineWidth(2.0f);
-            RenderUtils.awtColor(focusOutBorderColor);
-            RenderUtils.drawRectBorder(posX - 2, posY - 2, posX + width + 2, posY + height + 2);
-        } else {
-            GL11.glLineWidth(1.0f);
-            RenderUtils.awtColor(borderColor);
-            RenderUtils.drawRectBorder(posX, posY - 1, posX + width + 1, posY + height);
-        }
-
-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-        this.textView.render();
     }
 
     public void onKey(UIEvent uiEvent) {
@@ -80,12 +43,5 @@ public class InputField extends View {
         }
     }
 
-    public void onEvent(UIEvent uiEvent) {
-        if (this.selfRender && uiEvent instanceof UIRender2DEvent) {
-            this.render();
-        }
-        if (uiEvent instanceof UIKeyEvent) {
-            this.onKey(uiEvent);
-        }
-    }
+    public void onEvent(UIEvent uiEvent){}
 }

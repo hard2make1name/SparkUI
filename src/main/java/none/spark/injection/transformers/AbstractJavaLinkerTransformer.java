@@ -18,7 +18,7 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class AbstractJavaLinkerTransformer implements IClassTransformer {
 
-    public static String path = "none/spark/injection/handlers/AbstractJavaLinkerHandler";
+    public static final String path = "none/spark/injection/handlers/AbstractJavaLinkerHandler";
 
     /**
      * Transform a class

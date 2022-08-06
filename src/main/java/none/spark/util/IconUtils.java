@@ -4,6 +4,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.Objects;
 
@@ -30,7 +31,7 @@ public final class IconUtils {
             for (int i : rgb) {
                 byteBuffer.putInt(i << 8 | i >> 24 & 255);
             }
-            byteBuffer.flip();
+            ((Buffer)byteBuffer).flip();
             return byteBuffer;
         } catch (IOException e) {
             e.printStackTrace();

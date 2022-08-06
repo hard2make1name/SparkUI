@@ -14,11 +14,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GuiIngame.class)
 public abstract class MixinGuiInGame {
 
-    // 注入到 HEAD ，颜色是灰的，不知道为啥
+    // 注入到 HEAD ，GL渲染出来的的颜色是灰的，不知道为啥
     @Inject(method = "renderTooltip", at = @At("RETURN"))
     private void renderTooltipMixin(ScaledResolution scaledResolution, float partialTicks, CallbackInfo callbackInfo) {
         Statics.eventManager.callEvent(new Render2DEvent(scaledResolution, partialTicks));
-        UIStatics.uiEventManager.onEvent(new UIRender2DEvent(scaledResolution, partialTicks));
+        UIStatics.viewRenderer.renderCanvas(UIStatics.gameCanvas);
     }
 
 }
