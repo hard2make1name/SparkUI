@@ -1,12 +1,12 @@
 # SparkUI
 ![code size](https://img.shields.io/github/languages/code-size/hard2make1name/SparkUI)
 ![code lines](https://img.shields.io/tokei/lines/github/hard2make1name/SparkUI)  
-A Mod that beautifies and optimizes Minecraft client.
+A Mod that beautifies and optimizes Minecraft client.  
 
 ## License
 WTFPL!  
-You are allowed to
-0. You just DO WHAT THE F*CK YOU WANT TO
+You are allowed to  
+0. You just DO WHAT THE F*CK YOU WANT TO  
 
 ## Setting up a Workspace
 1. Clone the repository using `git clone https://github.com/hard2make1name/SparkUI.git` (make sure you have git installed on your system).
