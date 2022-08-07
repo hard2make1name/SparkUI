@@ -2,7 +2,6 @@ package none.spark.ui.layer;
 
 import net.minecraft.client.Minecraft;
 import none.spark.ui.event.UIEvent;
-import none.spark.ui.event.events.UIRender2DEvent;
 import none.spark.ui.util.NullGuiScreen;
 
 import java.util.ArrayList;
@@ -33,5 +32,9 @@ public class Canvas extends View {
         this.views.add(view);
     }
 
-    public void onEvent(UIEvent uiEvent) {}
+    public void onEvent(UIEvent uiEvent) {
+        for (View view : this.views) {
+            view.onEvent(uiEvent);
+        }
+    }
 }

@@ -13,7 +13,7 @@ public class GlyphPool {
     //https://learnopengl.com/code_viewer.php?code=in-practice/text_rendering
 
     //public static final String test = "";
-    public static final String ascii = "!\\\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ";
+    public static final String asciiVisible = "!\\\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ";
     public static final int[] commonSize = {50, 80};
     public final Font originFont;
     // different size of font
@@ -35,7 +35,6 @@ public class GlyphPool {
         this.glyphMap = new HashMap<>();
         this.fonts = new HashMap<>();
         this.fontMetricses = new HashMap<>();
-
     }
 
     public boolean canDisplay(final int codePoint) {
@@ -73,7 +72,7 @@ public class GlyphPool {
 
     public Glyph createGlyph(final int codePoint, final int size) {
         BufferedImage image = createCharImage(codePoint, size);
-        return new Glyph(image.getWidth(), image.getHeight(), size, RenderUtils.uploadTexture(image));
+        return new Glyph(image.getWidth(), image.getHeight(), RenderUtils.uploadTexture(image));
     }
 
     public BufferedImage createCharImage(final int codePoint, final int size) {

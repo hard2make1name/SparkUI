@@ -11,6 +11,7 @@ import none.spark.ui.util.RenderUtils;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class ViewRenderer {
     public static final GlyphPool glyphPool = UIStatics.glyphPool;
@@ -44,13 +45,21 @@ public class ViewRenderer {
         float lineWidth = 0;
         float lineHeight = glyphPool.getFontMetrics(textView.fontSize).getHeight();
         float totalHeight = 0;
+        // ?
         float spaceWidth = getGlyph(" ".codePointAt(0), textView.fontSize, textView.fontSubstitute).width;
 
-        GL11.glPushMatrix();
-        GL11.glScalef(1.0f / UIStatics.scale, 1.0f / UIStatics.scale, 1.0f);
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        RenderUtils.glScissorVerticalFlipped(textView.posX, textView.posY, textView.width, textView.height);
 
+        int scissorWidth = textView.width, scissorHeight = textView.height;
+
+        if (textView.horizontalOverflow) {
+            scissorWidth = UIStatics.gameCanvas.width - textView.posX;
+        }
+        if (textView.verticalOverflow) {
+            scissorHeight = UIStatics.gameCanvas.height - textView.posY;
+        }
+
+        RenderUtils.glScissorVerticalFlipped(textView.posX, textView.posY, scissorWidth, scissorHeight);
         Glyph finalGlyph;
         int[] codePoints = textView.text.codePoints().toArray();
         for (int codePoint : codePoints) {
@@ -66,18 +75,20 @@ public class ViewRenderer {
                     lineWidth += 4 * spaceWidth;
                     break;
             }
-            // Horizontal Overflow Check
-            if (lineWidth > textView.width) {
+            // 文字超过右边了，不渲染
+            if (!textView.horizontalOverflow && lineWidth > textView.width) {
                 continue;
             }
 
-            if (totalHeight > textView.height) break;
+            // 文字超过底下了，没救了
+            if (!textView.verticalOverflow && totalHeight > textView.height) break;
 
             finalGlyph = getGlyph(codePoint, textView.fontSize, textView.fontSubstitute);
 
             // cannot find the glyph
             if (finalGlyph == null) continue;
 
+            // 自动换行
             if (lineWidth + finalGlyph.width > textView.width) {
                 if (textView.autoLineWrap) {
                     lineWidth = 0;
@@ -94,8 +105,6 @@ public class ViewRenderer {
             );
             lineWidth += finalGlyph.width;
         }
-
-        GL11.glPopMatrix();
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 }

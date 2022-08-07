@@ -4,6 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import none.spark.SparkUI;
 import none.spark.Statics;
+import none.spark.event.events.KeyDownEvent;
+import none.spark.event.events.KeyUpEvent;
 import none.spark.ui.UIStatics;
 import none.spark.ui.event.events.UIKeyEvent;
 import none.spark.ui.event.events.UIMouseEvent;
@@ -20,7 +22,7 @@ import java.nio.ByteBuffer;
 @Mixin(Minecraft.class)
 public abstract class MixinMinecraft {
 
-    @Inject(method = "createDisplay", at = @At(value = "INVOKE",target = "Lorg/lwjgl/opengl/Display;setTitle(Ljava/lang/String;)V", shift = At.Shift.AFTER))
+    @Inject(method = "createDisplay", at = @At(remap = false, value = "INVOKE", target = "Lorg/lwjgl/opengl/Display;setTitle(Ljava/lang/String;)V", shift = At.Shift.AFTER))
     private void mixinCreateDisplay(CallbackInfo callbackInfo) {
         Display.setTitle("Minecraft 1.8.9 - SparkUI");
     }
@@ -42,11 +44,11 @@ public abstract class MixinMinecraft {
         Statics.sparkUI.run();
     }
 
-    @Inject(method = "resize", at = @At("RETURN"))
+    @Inject(method = "resize", at = @At("HEAD"))
     private void resizeMixin(int width, int height, CallbackInfo callbackInfo) {
         UIStatics.gameCanvas.width = width;
         UIStatics.gameCanvas.height = height;
-        UIStatics.scale = new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        //UIStatics.scale = new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
     }
 
     //    @Inject(method = "dispatchKeypresses", at = @At(value = "HEAD"))
@@ -66,17 +68,28 @@ public abstract class MixinMinecraft {
 //    }
     @Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;dispatchKeypresses()V"))
     private void keyboardNext(CallbackInfo callbackInfo) {
-        UIStatics.uiEventManager.onEvent(new UIKeyEvent());
-        System.out.printf(
-                "getEventCharacter(): {char:%c,int:%d}, getEventKey(): %d,getEventKeyState(): %b,isRepeatEvent() : %b,getNumKeyboardEvents() : %d getEventNanoseconds() : %s\n"
-                , Keyboard.getEventCharacter()
-                , (int) Keyboard.getEventCharacter()
-                , Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey()
-                , Keyboard.getEventKeyState()
-                , Keyboard.isRepeatEvent()
-                , Keyboard.getNumKeyboardEvents()
-                , Keyboard.getEventNanoseconds()
+        Statics.eventManager.callEvent(
+                Keyboard.getEventKeyState() ?
+                        new KeyDownEvent(Keyboard.getEventKey()) :
+                        new KeyUpEvent(Keyboard.getEventKey())
         );
+        UIStatics.uiEventManager.onEvent(new UIKeyEvent());
+//        System.out.printf(
+//                "getEventCharacter(): {char:%c,int:%d}, getEventKey(): %d,getEventKeyState(): %b,isRepeatEvent() : %b,getNumKeyboardEvents() : %d getEventNanoseconds() : %s\n"
+//                , Keyboard.getEventCharacter()
+//                , (int) Keyboard.getEventCharacter()
+//                , Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey()
+//                , Keyboard.getEventKeyState()
+//                , Keyboard.isRepeatEvent()
+//                , Keyboard.getNumKeyboardEvents()
+//                , Keyboard.getEventNanoseconds()
+//        );
+    }
+
+    @Inject(method = "runTick", at = @At(remap = false, value = "INVOKE", target = "Lnet/minecraftforge/fml/common/FMLCommonHandler;fireMouseInput()V"))
+    private void mouseNext(CallbackInfo callbackInfo) {
+        UIStatics.uiEventManager.onEvent(new UIMouseEvent());
+        //System.out.printf("Mouse.getEventButton(): %d,Mouse.getEventX(): %d,Mouse.getEventY(): %d,Mouse.getEventButtonState(): %b\n", Mouse.getEventButton(), Mouse.getEventX(), Mouse.getEventY(), Mouse.getEventButtonState());
     }
 //    @Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/settings/KeyBinding;setKeyBindState(IZ)V"))
 //    private void keyboardNext(CallbackInfo callbackInfo) {
@@ -121,10 +134,4 @@ public abstract class MixinMinecraft {
 //
 //        // 按键之后会打印两次，结果完全相同，这是为什么? 在 dispatchKeypresses 却没有这种状况 :O
 //    }
-
-    @Inject(remap = false, method = "runTick", at = @At(value = "INVOKE", target = "Lorg/lwjgl/input/Mouse;getEventButton()I", shift = At.Shift.NONE))
-    private void mouseNext(CallbackInfo callbackInfo) {
-        UIStatics.uiEventManager.onEvent(new UIMouseEvent());
-        //System.out.printf("Mouse.getEventButton(): %d,Mouse.getEventX(): %d,Mouse.getEventY(): %d,Mouse.getEventButtonState(): %b\n", Mouse.getEventButton(), Mouse.getEventX(), Mouse.getEventY(), Mouse.getEventButtonState());
-    }
 }

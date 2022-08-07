@@ -9,6 +9,4 @@ public class Statics {
     public static FontManager fontManager;
     public static EventManager eventManager;
     public static ScriptManager scriptManager;
-
-
 }

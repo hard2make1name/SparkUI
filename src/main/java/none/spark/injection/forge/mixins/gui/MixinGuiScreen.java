@@ -7,6 +7,8 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.IChatComponent;
 import none.spark.Statics;
 import none.spark.event.events.CommandEvent;
+import none.spark.ui.UIStatics;
+import none.spark.ui.event.events.UIMouseEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -51,6 +53,11 @@ public abstract class MixinGuiScreen {
             Statics.eventManager.callEvent(new CommandEvent(args[0], args));
             callbackInfo.cancel();
         }
+    }
+
+    @Inject(method = "handleMouseInput", at = @At("HEAD"))
+    public void mixinHandleMouseInput(CallbackInfo callbackInfo) {
+        UIStatics.uiEventManager.onEvent(new UIMouseEvent());
     }
 
 }
