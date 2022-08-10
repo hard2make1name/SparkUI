@@ -66,7 +66,6 @@ public final class RenderUtils {
 
         GL11.glEnd();
     }
-
     public static void drawRectBorder(float x, float y, float x2, float y2) {
         GL11.glBegin(GL11.GL_LINE_LOOP);
 
@@ -77,7 +76,6 @@ public final class RenderUtils {
 
         GL11.glEnd();
     }
-
 
     public static double toRadians(double degrees) {
         return degrees * _PI_divide_180;

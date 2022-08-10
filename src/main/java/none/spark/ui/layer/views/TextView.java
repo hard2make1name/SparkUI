@@ -10,8 +10,8 @@ import org.lwjgl.input.Mouse;
 import java.awt.*;
 import java.util.ArrayList;
 
-//懒得做抽象层了
-// TODO 字体自定义
+// TODO custom font
+// TODO Optimize the combination of TextView and ViewRenderer
 public class TextView extends View {
     public int posX = 0;
     public int posY = 0;
@@ -19,22 +19,28 @@ public class TextView extends View {
     public int height = 20;
     public int fontSize = 20;
     public Color fontColor = Color.WHITE;
+    public Color selectionColor = new Color(33,66,131);
     public boolean fontSubstitute = true;
-    public String text = "Hello World!";
+    public String text = "Hello, TextView!";
 
-    public boolean richText = false;// TODO 富文本
+    public boolean richText = false;// TODO rich text
     public boolean lineWrap = true;// 遇到 \n 换行
     public boolean autoLineWrap = true;// 文本自动换行
     public boolean horizontalOverflow = false;// false : 文本不显示超出垂直边界的部分 ,true : 文本可以超出水平边界，继续显示
     public boolean verticalOverflow = false;// false : 文本不显示超出垂直边界的部分 , true : 文本可以超出垂直边界，继续显示
 
     public TextView() {
-
     }
 
-    public ArrayList<Glyph> glyphList = new ArrayList<>();
-    public int selectionBeginPosX, selectionBeginPosY;
-    public ArrayList<ArrayList<Integer>> charWidthList;
+    public void setText(String text) {
+        this.text = text;
+        this.glyphList = null;
+        // then the ViewRenderer can know that it's time to updateTextViewGlyphList
+    }
+
+    // runtime
+    public ArrayList<Glyph> glyphList;
+    public int mouseX,mouseY, mouseBeginPosX, mouseBeginPosY, mouseEndPosX, mouseEndPosY;
 
     // Mouse.getEventButtonState()  false : 按键放开, true : 按键按住
     // Mouse.getEventButton()  -1 : 无按键有变化, 0 : 鼠标左键, 1 : 鼠标右键, 2 : 鼠标中键, 3 : 鼠标拓展键1, 4 : 鼠标拓展键2
@@ -60,18 +66,26 @@ public class TextView extends View {
                     // Mouse down
                     if (Mouse.isButtonDown(0)) {
                         // Left down
-                        int mouseX = Mouse.getEventX();
-                        int mouseY = UIStatics.gameCanvas.height - Mouse.getEventY();
-                        if (mouseX > this.posX && mouseX < this.posX + this.width && mouseY > this.posY && mouseY < this.posY + this.height) {
+                        this.mouseX = Mouse.getEventX();
+                        this.mouseY = UIStatics.gameCanvas.height - Mouse.getEventY();
+                        if (
+                                this.mouseX > this.posX && this.mouseX < this.posX + this.width &&
+                                this.mouseY > this.posY && this.mouseY < this.posY + this.height
+                        ) {
                             // click on the TextView
-                            this.selectionBeginPosX = mouseX;
-                            this.selectionBeginPosY = mouseY;
+                            this.mouseBeginPosX = mouseX;
+                            this.mouseBeginPosY = mouseY;
+                            this.mouseEndPosX = mouseX;
+                            this.mouseEndPosY = mouseY;
+
                         }
                     }
                 }
             } else {
                 if (Mouse.isButtonDown(0)) {
-                    System.out.println("Left dragging ");
+                    // Left dragging
+                    this.mouseEndPosX = Mouse.getEventX();
+                    this.mouseEndPosY = UIStatics.gameCanvas.height - Mouse.getEventY();
                 }
             }
         }

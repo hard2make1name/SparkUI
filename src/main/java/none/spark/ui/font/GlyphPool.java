@@ -72,11 +72,13 @@ public class GlyphPool {
 
     public Glyph createGlyph(final int codePoint, final int size) {
         BufferedImage image = createCharImage(codePoint, size);
+        if (codePoint == "\n".codePointAt(0)) {
+            return new Control(image.getWidth(), image.getHeight(), RenderUtils.uploadTexture(image), codePoint);
+        }
         return new Glyph(image.getWidth(), image.getHeight(), RenderUtils.uploadTexture(image));
     }
 
     public BufferedImage createCharImage(final int codePoint, final int size) {
-        // 处理Emoji不应该在这里
         Font finalFont;
         FontMetrics finalFontMetrics;
         if (!this.availableSize.contains(size)) {
