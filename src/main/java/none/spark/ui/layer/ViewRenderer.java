@@ -108,19 +108,19 @@ public class ViewRenderer {
                 continue;
             }
 
-            if (lines == selectionBeginLine) {
-                if(lineWidth > mouseBeginPosX && selectionBeginPosX == 0){
-                    selectionBeginPosX = (int) lineWidth;
-                    selectionBeginIndex = indexCount;
-                }
+            finalGlyph = getGlyph(codePoint, textView.fontSize, textView.fontSubstitute);
+            // lineWidth - finalGlyph.width / 2f > mouseBeginPosX
+            if (lines == selectionBeginLine && mouseBeginPosX > lineWidth - finalGlyph.width / 2f && mouseBeginPosX < lineWidth + finalGlyph.width / 2f && selectionBeginPosX == 0) {
+                selectionBeginPosX = (int) lineWidth;
+                selectionBeginIndex = indexCount;
+                //System.out.println(lineWidth);
             }
 
-            if (lines == selectionEndLine && lineWidth > mouseEndPosX && selectionEndPosX == 0) {
+            if (lines == selectionEndLine && mouseEndPosX >= lineWidth - finalGlyph.width / 2f && mouseEndPosX <= lineWidth + finalGlyph.width / 2f && selectionEndPosX == 0) {
                 selectionEndPosX = (int) lineWidth;
                 selectionEndIndex = indexCount;
             }
 
-            finalGlyph = getGlyph(codePoint, textView.fontSize, textView.fontSubstitute);
             // 文字超过右边了，不渲染
             if (!textView.horizontalOverflow && lineWidth > textView.width) {
                 continue;
@@ -146,54 +146,96 @@ public class ViewRenderer {
             lineWidth += finalGlyph.width;
             indexCount++;
         }
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
+        // render text selection :)
         RenderUtils.awtColor(textView.selectionColor);
         if (lineDiff > 0) {
             // drag to down
-            RenderUtils.drawRect(
-                    textView.posX + selectionBeginPosX,
-                    textView.posY + lineHeight * selectionBeginLine,
-                    textView.posX + textView.width,
-                    textView.posY + lineHeight * (selectionBeginLine + 1)
-            );
-            for (int i = selectionBeginLine; i < selectionEndLine - 1; i++) {
+            if (mouseEndPosY > textView.height) {
+                // cursor under the textView
+                RenderUtils.drawRect(
+                        textView.posX + selectionBeginPosX,
+                        textView.posY + lineHeight * selectionBeginLine,
+                        textView.posX + textView.width,
+                        textView.posY + lineHeight * (selectionBeginLine + 1)
+                );
+                for (int i = selectionBeginLine + 1; i < lines; i++) {
+                    RenderUtils.drawRect(
+                            textView.posX,
+                            textView.posY + lineHeight * i,
+                            textView.posX + textView.width,
+                            textView.posY + lineHeight * (i + 1)
+                    );
+                }
+            } else {
+                // cursor in the textView
+                RenderUtils.drawRect(
+                        textView.posX + selectionBeginPosX,
+                        textView.posY + lineHeight * selectionBeginLine,
+                        textView.posX + textView.width,
+                        textView.posY + lineHeight * (selectionBeginLine + 1)
+                );
+                for (int i = selectionBeginLine + 1; i < selectionEndLine; i++) {
+                    RenderUtils.drawRect(
+                            textView.posX,
+                            textView.posY + lineHeight * i,
+                            textView.posX + textView.width,
+                            textView.posY + lineHeight * (i + 1)
+                    );
+                }
                 RenderUtils.drawRect(
                         textView.posX,
-                        textView.posY + lineHeight * (i + 1),
-                        textView.posX + textView.width,
-                        textView.posY + lineHeight * (i + 2)
+                        textView.posY + lineHeight * selectionEndLine,
+                        textView.posX + selectionEndPosX,
+                        textView.posY + lineHeight * (selectionEndLine + 1)
                 );
             }
-            RenderUtils.drawRect(
-                    textView.posX,
-                    textView.posY + lineHeight * selectionEndLine,
-                    textView.posX + selectionEndPosX,
-                    textView.posY + lineHeight * (selectionEndLine + 1)
-            );
+            // ==== //
         } else if (lineDiff < 0) {
             // drag to up
-            RenderUtils.drawRect(
-                    textView.posX,
-                    textView.posY + lineHeight * selectionBeginLine,
-                    textView.posX + selectionBeginPosX,
-                    textView.posY + lineHeight * (selectionBeginLine + 1)
-            );
-            for (int i = selectionEndLine; i < selectionBeginLine - 1; i++) {
+            if (mouseEndPosY < 0) {
+                // cursor over the textView
                 RenderUtils.drawRect(
                         textView.posX,
-                        textView.posY + lineHeight * (i + 1),
+                        textView.posY + lineHeight * selectionBeginLine,
+                        textView.posX + selectionBeginPosX,
+                        textView.posY + lineHeight * (selectionBeginLine + 1)
+                );
+                for (int i = 0; i < selectionBeginLine; i++) {
+                    RenderUtils.drawRect(
+                            textView.posX,
+                            textView.posY + lineHeight * i,
+                            textView.posX + textView.width,
+                            textView.posY + lineHeight * (i + 1)
+                    );
+                }
+            } else {
+                // cursor in the textView
+                RenderUtils.drawRect(
+                        textView.posX,
+                        textView.posY + lineHeight * selectionBeginLine,
+                        textView.posX + selectionBeginPosX,
+                        textView.posY + lineHeight * (selectionBeginLine + 1)
+                );
+                for (int i = selectionEndLine + 1; i < selectionBeginLine; i++) {
+                    RenderUtils.drawRect(
+                            textView.posX,
+                            textView.posY + lineHeight * i,
+                            textView.posX + textView.width,
+                            textView.posY + lineHeight * (i + 1)
+                    );
+                }
+                RenderUtils.drawRect(
+                        textView.posX + selectionEndPosX,
+                        textView.posY + lineHeight * selectionEndLine,
                         textView.posX + textView.width,
-                        textView.posY + lineHeight * (i + 2)
+                        textView.posY + lineHeight * (selectionEndLine + 1)
                 );
             }
-            RenderUtils.drawRect(
-                    textView.posX + selectionEndPosX,
-                    textView.posY + lineHeight * selectionEndLine,
-                    textView.posX + textView.width,
-                    textView.posY + lineHeight * (selectionEndLine + 1)
-            );
+
+            // ==== //
         } else {
+            // single line selection
             if (selectionEndPosX > selectionBeginPosX) {
                 // drag left to right
                 RenderUtils.drawRect(
@@ -211,9 +253,10 @@ public class ViewRenderer {
                         textView.posY + lineHeight * (selectionBeginLine + 1)
                 );
             }
-
+            // ==== //
         }
 
         GL11.glColor4f(1, 1, 1, 1);
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 }
