@@ -113,7 +113,6 @@ public class ViewRenderer {
             if (lines == selectionBeginLine && mouseBeginPosX > lineWidth - finalGlyph.width / 2f && mouseBeginPosX < lineWidth + finalGlyph.width / 2f && selectionBeginPosX == 0) {
                 selectionBeginPosX = (int) lineWidth;
                 selectionBeginIndex = indexCount;
-                //System.out.println(lineWidth);
             }
 
             if (lines == selectionEndLine && mouseEndPosX >= lineWidth - finalGlyph.width / 2f && mouseEndPosX <= lineWidth + finalGlyph.width / 2f && selectionEndPosX == 0) {
