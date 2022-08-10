@@ -8,6 +8,7 @@ import net.minecraft.util.IChatComponent;
 import none.spark.Statics;
 import none.spark.event.events.CommandEvent;
 import none.spark.ui.UIStatics;
+import none.spark.ui.event.events.UIKeyEvent;
 import none.spark.ui.event.events.UIMouseEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -58,6 +59,11 @@ public abstract class MixinGuiScreen {
     @Inject(method = "handleMouseInput", at = @At("HEAD"))
     public void mixinHandleMouseInput(CallbackInfo callbackInfo) {
         UIStatics.uiEventManager.onEvent(new UIMouseEvent());
+    }
+
+    @Inject(method = "handleKeyboardInput", at = @At("HEAD"))
+    public void mixinHandleKeyboardInput(CallbackInfo callbackInfo){
+        UIStatics.uiEventManager.onEvent(new UIKeyEvent());
     }
 
 }

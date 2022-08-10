@@ -84,15 +84,14 @@ public class ViewRenderer {
         int mouseBeginPosY = textView.mouseBeginPosY - textView.posY;
         int selectionBeginLine = ((mouseBeginPosY - mouseBeginPosY % (int) lineHeight) / (int) lineHeight);
         int selectionBeginPosX = 0;
-        int selectionBeginIndex = 0;
 
         int mouseEndPosX = textView.mouseEndPosX - textView.posX;
         int mouseEndPosY = textView.mouseEndPosY - textView.posY;
         int selectionEndLine = ((mouseEndPosY - mouseEndPosY % (int) lineHeight) / (int) lineHeight);
         int selectionEndPosX = 0;
-        int selectionEndIndex = 0;
 
         int lineDiff = selectionEndLine - selectionBeginLine;
+        int lastRenderedIndex = 0;
 
         int[] codePoints = textView.text.codePoints().toArray();
         Glyph finalGlyph;
@@ -112,12 +111,12 @@ public class ViewRenderer {
             // lineWidth - finalGlyph.width / 2f > mouseBeginPosX
             if (lines == selectionBeginLine && mouseBeginPosX > lineWidth - finalGlyph.width / 2f && mouseBeginPosX < lineWidth + finalGlyph.width / 2f && selectionBeginPosX == 0) {
                 selectionBeginPosX = (int) lineWidth;
-                selectionBeginIndex = indexCount;
+                textView.selectionBeginIndex = indexCount;
             }
 
             if (lines == selectionEndLine && mouseEndPosX >= lineWidth - finalGlyph.width / 2f && mouseEndPosX <= lineWidth + finalGlyph.width / 2f && selectionEndPosX == 0) {
                 selectionEndPosX = (int) lineWidth;
-                selectionEndIndex = indexCount;
+                textView.selectionEndIndex = indexCount;
             }
 
             // 文字超过右边了，不渲染
@@ -125,7 +124,10 @@ public class ViewRenderer {
                 continue;
             }
             // 文字超过底下了，没救了
-            if (!textView.verticalOverflow && totalHeight > textView.height) break;
+            if (!textView.verticalOverflow && totalHeight > textView.height) {
+                lastRenderedIndex = indexCount;
+                break;
+            }
             // 自动换行
             if (lineWidth + finalGlyph.width > textView.width) {
                 if (textView.autoLineWrap) {
@@ -152,6 +154,7 @@ public class ViewRenderer {
             // drag to down
             if (mouseEndPosY > textView.height) {
                 // cursor under the textView
+                textView.selectionEndIndex = lastRenderedIndex;
                 RenderUtils.drawRect(
                         textView.posX + selectionBeginPosX,
                         textView.posY + lineHeight * selectionBeginLine,
@@ -194,6 +197,7 @@ public class ViewRenderer {
             // drag to up
             if (mouseEndPosY < 0) {
                 // cursor over the textView
+                textView.selectionEndIndex = 0;
                 RenderUtils.drawRect(
                         textView.posX,
                         textView.posY + lineHeight * selectionBeginLine,

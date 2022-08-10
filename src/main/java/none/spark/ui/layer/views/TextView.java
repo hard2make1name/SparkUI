@@ -2,9 +2,12 @@ package none.spark.ui.layer.views;
 
 import none.spark.ui.UIStatics;
 import none.spark.ui.event.UIEvent;
+import none.spark.ui.event.events.UIKeyEvent;
 import none.spark.ui.event.events.UIMouseEvent;
 import none.spark.ui.font.Glyph;
 import none.spark.ui.layer.View;
+import none.spark.util.ExternalUtils;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
@@ -19,7 +22,7 @@ public class TextView extends View {
     public int height = 20;
     public int fontSize = 20;
     public Color fontColor = Color.WHITE;
-    public Color selectionColor = new Color(33,66,131);
+    public Color selectionColor = new Color(33, 66, 131);
     public boolean fontSubstitute = true;
     public String text = "Hello, TextView!";
 
@@ -40,7 +43,9 @@ public class TextView extends View {
 
     // runtime
     public ArrayList<Glyph> glyphList;
-    public int mouseX,mouseY, mouseBeginPosX, mouseBeginPosY, mouseEndPosX, mouseEndPosY;
+    public int mouseX, mouseY, mouseBeginPosX, mouseBeginPosY, mouseEndPosX, mouseEndPosY;
+    public int selectionBeginIndex, selectionEndIndex;
+    public boolean isControlDown = false;
 
     // Mouse.getEventButtonState()  false : 按键放开, true : 按键按住
     // Mouse.getEventButton()  -1 : 无按键有变化, 0 : 鼠标左键, 1 : 鼠标右键, 2 : 鼠标中键, 3 : 鼠标拓展键1, 4 : 鼠标拓展键2
@@ -49,6 +54,39 @@ public class TextView extends View {
     // TODO To know the difference between Mouse.getX() and Mouse.getEventX()
 
     public void onEvent(UIEvent uiEvent) {
+        if (uiEvent instanceof UIKeyEvent) {
+            if (Keyboard.getEventKey() == 29 || Keyboard.getEventKey() == 157) {
+                this.isControlDown = Keyboard.getEventKeyState();
+            }
+            if (this.isControlDown && Keyboard.getEventKeyState()) {
+                // Ctrl + V = Paste
+                if (Keyboard.getEventKey() == 46) {
+                    // Ctrl + C = Copy
+                    if (selectionEndIndex > selectionBeginIndex) {
+                        ExternalUtils.setClipboardString(this.text.substring(selectionBeginIndex, selectionEndIndex));
+                    } else {
+                        ExternalUtils.setClipboardString(this.text.substring(selectionEndIndex, selectionBeginIndex));
+                    }
+                }
+            }
+
+            System.out.printf(
+                    "getEventCharacter(): {char:%c, int:%d}," +
+                            "getEventKey(): %d," +
+                            "getKeyName(): %s," +
+                            "getEventKeyState(): %b," +
+                            "isRepeatEvent() : %b," +
+                            "getNumKeyboardEvents() : %d" +
+                            "\n"
+                    , Keyboard.getEventCharacter()
+                    , (int) Keyboard.getEventCharacter()
+                    , Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey()
+                    , Keyboard.getKeyName(Keyboard.getEventKey())
+                    , Keyboard.getEventKeyState()
+                    , Keyboard.isRepeatEvent()
+                    , Keyboard.getNumKeyboardEvents()
+            );
+        }
         if (uiEvent instanceof UIMouseEvent) {
 //            System.out.printf(
 //                    "Mouse.getEventButton(): %d,Mouse.getEventX(): %d,Mouse.getEventY(): %d,Mouse.getEventButtonState(): %b\n",
@@ -70,7 +108,7 @@ public class TextView extends View {
                         this.mouseY = UIStatics.gameCanvas.height - Mouse.getEventY();
                         if (
                                 this.mouseX > this.posX && this.mouseX < this.posX + this.width &&
-                                this.mouseY > this.posY && this.mouseY < this.posY + this.height
+                                        this.mouseY > this.posY && this.mouseY < this.posY + this.height
                         ) {
                             // click on the TextView
                             this.mouseBeginPosX = mouseX;
