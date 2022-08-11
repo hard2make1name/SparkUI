@@ -1,4 +1,4 @@
-package none.spark.injection.transformers;
+package none.spark.injection.transformer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.launchwrapper.IClassTransformer;
@@ -13,10 +13,10 @@ import static org.objectweb.asm.Opcodes.*;
  */
 public class ForgeNetworkTransformer implements IClassTransformer {
 
-    public static final String path = "none/spark/injection/transformers/ForgeNetworkTransformer";
+    public static final String path = "none/spark/injection/transformer/ForgeNetworkTransformer";
 
     public static boolean returnMethod() {
-        return /*AntiForge.enabled && AntiForge.blockFML && */!Minecraft.getMinecraft().isIntegratedServerRunning();
+        return !Minecraft.getMinecraft().isIntegratedServerRunning();
     }
 
     /**

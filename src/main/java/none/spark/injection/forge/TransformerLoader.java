@@ -1,8 +1,8 @@
 package none.spark.injection.forge;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
-import none.spark.injection.transformers.AbstractJavaLinkerTransformer;
-import none.spark.injection.transformers.ForgeNetworkTransformer;
+import none.spark.injection.transformer.AbstractJavaLinkerTransformer;
+import none.spark.injection.transformer.ForgeNetworkTransformer;
 
 import java.util.Map;
 
