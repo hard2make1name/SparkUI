@@ -1,6 +1,8 @@
 package none.spark.injection.forge;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+import none.spark.injection.transformer.AbstractJavaLinkerTransformer;
+import none.spark.injection.transformer.ForgeNetworkTransformer;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.Mixins;
@@ -19,9 +21,13 @@ public class MixinLoader implements IFMLLoadingPlugin {
 
     @Override
     public String[] getASMTransformerClass() {
-        return new String[0];
+        // This code in TransformerLoader is not effective :(
+        // so I try to place the code there, then it works :)
+        return new String[]{
+                AbstractJavaLinkerTransformer.class.getName(),
+                ForgeNetworkTransformer.class.getName()
+        };
     }
-
     @Override
     public String getModContainerClass() {
         return null;

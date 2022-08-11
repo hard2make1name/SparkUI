@@ -73,7 +73,6 @@ public class Remapper {
         if (fields.containsKey(clazz.getName())) {
             return fields.get(clazz.getName()).getOrDefault(name, name);
         }
-
         return name;
     }
 
@@ -81,8 +80,8 @@ public class Remapper {
         if (methods.containsKey(clazz.getName())) {
             return methods.get(clazz.getName()).getOrDefault(name + desc, name);
         }
-
         return name;
+
     }
 
 }

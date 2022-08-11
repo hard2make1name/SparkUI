@@ -1,3 +1,4 @@
+
 package none.spark.injection.transformer;
 
 import net.minecraft.launchwrapper.IClassTransformer;
@@ -18,7 +19,7 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class AbstractJavaLinkerTransformer implements IClassTransformer {
 
-    public static final String path = "none/spark/injection/handler/AbstractJavaLinkerHandler";
+    public static String thePath = "none/spark/injection/handler/AbstractJavaLinkerHandler";
 
     /**
      * Transform a class
@@ -43,7 +44,7 @@ public class AbstractJavaLinkerTransformer implements IClassTransformer {
                                     new FieldInsnNode(GETFIELD, "jdk/internal/dynalink/beans/AbstractJavaLinker", "clazz", "Ljava/lang/Class;"),
                                     new VarInsnNode(ALOAD, 1),
                                     new VarInsnNode(ALOAD, 2),
-                                    new MethodInsnNode(INVOKESTATIC, path, "addMember", "(Ljava/lang/Class;Ljava/lang/String;Ljava/lang/reflect/AccessibleObject;)Ljava/lang/String;", false),
+                                    new MethodInsnNode(INVOKESTATIC, thePath, "addMember", "(Ljava/lang/Class;Ljava/lang/String;Ljava/lang/reflect/AccessibleObject;)Ljava/lang/String;", false),
                                     new VarInsnNode(ASTORE, 1)
                             ));
                             break;
@@ -52,7 +53,7 @@ public class AbstractJavaLinkerTransformer implements IClassTransformer {
                                     new VarInsnNode(ALOAD, 0),
                                     new FieldInsnNode(GETFIELD, "jdk/internal/dynalink/beans/AbstractJavaLinker", "clazz", "Ljava/lang/Class;"),
                                     new VarInsnNode(ALOAD, 1),
-                                    new MethodInsnNode(INVOKESTATIC, path, "addMember", "(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/String;", false),
+                                    new MethodInsnNode(INVOKESTATIC, thePath, "addMember", "(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/String;", false),
                                     new VarInsnNode(ASTORE, 1)
                             ));
                             break;
@@ -61,7 +62,7 @@ public class AbstractJavaLinkerTransformer implements IClassTransformer {
                                     new VarInsnNode(ALOAD, 0),
                                     new FieldInsnNode(GETFIELD, "jdk/internal/dynalink/beans/AbstractJavaLinker", "clazz", "Ljava/lang/Class;"),
                                     new VarInsnNode(ALOAD, 1),
-                                    new MethodInsnNode(INVOKESTATIC, path, "setPropertyGetter", "(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/String;", false),
+                                    new MethodInsnNode(INVOKESTATIC, thePath, "setPropertyGetter", "(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/String;", false),
                                     new VarInsnNode(ASTORE, 1)
                             ));
                             break;
@@ -73,6 +74,8 @@ public class AbstractJavaLinkerTransformer implements IClassTransformer {
                 throwable.printStackTrace();
             }
         }
+
         return basicClass;
     }
+
 }

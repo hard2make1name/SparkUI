@@ -69,7 +69,7 @@ public class UIEventManager {
                     }
                 }
             }
-            DebugUtils.printKeyboardDetails();
+            //DebugUtils.printKeyboardDetails();
         } else if (uiEvent instanceof UIMouseEvent) {
             if (Mouse.getEventButton() != -1) {
                 // Some mouse's button state was change
