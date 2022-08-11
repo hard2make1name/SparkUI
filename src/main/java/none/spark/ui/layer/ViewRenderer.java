@@ -1,11 +1,10 @@
 package none.spark.ui.layer;
 
-import net.minecraft.client.renderer.entity.Render;
 import none.spark.Statics;
 import none.spark.ui.UIStatics;
 import none.spark.ui.font.Glyph;
 import none.spark.ui.font.GlyphPool;
-import none.spark.ui.layer.views.TextView;
+import none.spark.ui.layer.views.TextField;
 import none.spark.ui.util.RenderUtils;
 import org.lwjgl.opengl.GL11;
 
@@ -13,7 +12,7 @@ public class ViewRenderer {
     public static final GlyphPool glyphPool = UIStatics.glyphPool;
 
     public Glyph getGlyph(int codePoint, int fontSize, boolean fontSubstitute) {
-        //  本来想在 TextView 存 Glyph 缓存的以减少 ViewRenderer 工作量
+        //  本来想在 TextField 存 Glyph 缓存的以减少 ViewRenderer 工作量
         //  但是意识到 GlyphPool 里面的 ArrayList 和 HashMap 提供 RandomAccess 我就放心了
         if (glyphPool.canDisplay(codePoint)) {
             return glyphPool.getGlyph(codePoint, fontSize);
@@ -27,7 +26,7 @@ public class ViewRenderer {
         return null;
     }
 
-//    public void updateTextViewGlyphList(TextView textView) {
+//    public void updateTextViewGlyphList(TextField textView) {
 //        textView.glyphList = new ArrayList<>();
 //
 //        int[] codePoints = textView.text.codePoints().toArray();
@@ -52,53 +51,52 @@ public class ViewRenderer {
         for (View view : canvas.views) {
             if (view instanceof Canvas) {
                 this.renderCanvas((Canvas) view);
-            } else if (view instanceof TextView) {
-                this.renderTextView((TextView) view);
+            } else if (view instanceof TextField) {
+                this.renderTextField((TextField) view);
             }
         }
     }
 
-    public void renderTextView(TextView textView) {
+    public void renderTextField(TextField textField) {
         // 上色
-        RenderUtils.awtColor(textView.fontColor);
+        RenderUtils.awtColor(textField.fontColor);
 
         // 限制渲染区域
-        int scissorWidth = textView.width, scissorHeight = textView.height;
-        if (textView.horizontalOverflow) {
-            scissorWidth = UIStatics.gameCanvas.width - textView.posX;
+        int scissorWidth = textField.width, scissorHeight = textField.height;
+        if (textField.horizontalOverflow) {
+            scissorWidth = UIStatics.gameCanvas.width - textField.posX;
         }
-        if (textView.verticalOverflow) {
-            scissorHeight = UIStatics.gameCanvas.height - textView.posY;
+        if (textField.verticalOverflow) {
+            scissorHeight = UIStatics.gameCanvas.height - textField.posY;
         }
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        RenderUtils.glScissorVerticalFlipped(textView.posX, textView.posY, scissorWidth, scissorHeight);
+        RenderUtils.glScissorVerticalFlipped(textField.posX, textField.posY, scissorWidth, scissorHeight);
 
         float lineWidth = 0;
-        float lineHeight = glyphPool.getFontMetrics(textView.fontSize).getHeight();
+        float lineHeight = glyphPool.getFontMetrics(textField.fontSize).getHeight();
         float totalHeight = 0;
         int lines = 0;
-        float spaceWidth = getGlyph(CODEPOINT_SPACE, textView.fontSize, textView.fontSubstitute).width;
+        float spaceWidth = getGlyph(CODEPOINT_SPACE, textField.fontSize, textField.fontSubstitute).width;
 
-        // 这些坐标是相对于 textView 的左上角的
-        int mouseBeginPosX = textView.mouseBeginPosX - textView.posX;
-        int mouseBeginPosY = textView.mouseBeginPosY - textView.posY;
+        // 这些坐标是相对于 textField 的左上角的
+        int mouseBeginPosX = textField.mouseBeginPosX - textField.posX;
+        int mouseBeginPosY = textField.mouseBeginPosY - textField.posY;
         int selectionBeginLine = ((mouseBeginPosY - mouseBeginPosY % (int) lineHeight) / (int) lineHeight);
         int selectionBeginPosX = 0;
 
-        int mouseEndPosX = textView.mouseEndPosX - textView.posX;
-        int mouseEndPosY = textView.mouseEndPosY - textView.posY;
+        int mouseEndPosX = textField.mouseEndPosX - textField.posX;
+        int mouseEndPosY = textField.mouseEndPosY - textField.posY;
         int selectionEndLine = ((mouseEndPosY - mouseEndPosY % (int) lineHeight) / (int) lineHeight);
         int selectionEndPosX = 0;
 
-        int lineDiff = selectionEndLine - selectionBeginLine;
         int lastRenderedIndex = 0;
 
-        int[] codePoints = textView.text.codePoints().toArray();
+        int[] codePoints = textField.text.codePoints().toArray();
         Glyph finalGlyph;
         int indexCount = 0;
         for (int codePoint : codePoints) {
             if (codePoint == CODEPOINT_NEW_LINE) {
-                if (textView.lineWrap) {
+                if (textField.lineWrap) {
                     lineWidth = 0;
                     totalHeight += lineHeight;
                     lines++;
@@ -107,30 +105,30 @@ public class ViewRenderer {
                 continue;
             }
 
-            finalGlyph = getGlyph(codePoint, textView.fontSize, textView.fontSubstitute);
+            finalGlyph = getGlyph(codePoint, textField.fontSize, textField.fontSubstitute);
             // lineWidth - finalGlyph.width / 2f > mouseBeginPosX
             if (lines == selectionBeginLine && mouseBeginPosX > lineWidth - finalGlyph.width / 2f && mouseBeginPosX < lineWidth + finalGlyph.width / 2f && selectionBeginPosX == 0) {
                 selectionBeginPosX = (int) lineWidth;
-                textView.selectionBeginIndex = indexCount;
+                textField.selectionBeginIndex = indexCount;
             }
 
             if (lines == selectionEndLine && mouseEndPosX >= lineWidth - finalGlyph.width / 2f && mouseEndPosX <= lineWidth + finalGlyph.width / 2f && selectionEndPosX == 0) {
                 selectionEndPosX = (int) lineWidth;
-                textView.selectionEndIndex = indexCount;
+                textField.selectionEndIndex = indexCount;
             }
 
             // 文字超过右边了，不渲染
-            if (!textView.horizontalOverflow && lineWidth > textView.width) {
+            if (!textField.horizontalOverflow && lineWidth > textField.width) {
                 continue;
             }
             // 文字超过底下了，没救了
-            if (!textView.verticalOverflow && totalHeight > textView.height) {
+            if (!textField.verticalOverflow && totalHeight > textField.height) {
                 lastRenderedIndex = indexCount;
                 break;
             }
             // 自动换行
-            if (lineWidth + finalGlyph.width > textView.width) {
-                if (textView.autoLineWrap) {
+            if (lineWidth + finalGlyph.width > textField.width) {
+                if (textField.autoLineWrap) {
                     lineWidth = 0;
                     totalHeight += lineHeight;
                     lines++;
@@ -139,100 +137,124 @@ public class ViewRenderer {
 
             RenderUtils.drawImage(
                     finalGlyph.textureId,
-                    textView.posX + lineWidth,
-                    textView.posY + totalHeight,
-                    textView.posX + (lineWidth + finalGlyph.width),
-                    textView.posY + (totalHeight + finalGlyph.height)
+                    textField.posX + lineWidth,
+                    textField.posY + totalHeight,
+                    textField.posX + (lineWidth + finalGlyph.width),
+                    textField.posY + (totalHeight + finalGlyph.height)
             );
             lineWidth += finalGlyph.width;
             indexCount++;
         }
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
         // render text selection :)
-        RenderUtils.awtColor(textView.selectionColor);
+        int lineDiff = selectionEndLine - selectionBeginLine;
+//        System.out.printf(
+//                "lineDiff:%d " +
+//                        "selectionBeginPosX: %d "+
+//                        "selectionEndPosX: %d "+
+//                        "\n",
+//                lineDiff,
+//                selectionBeginPosX,
+//                selectionEndPosX
+//        );
+//        System.out.print(
+//                (textField.posX + selectionBeginPosX) + "|" +
+//                        (textField.posY + lineHeight * selectionBeginLine) + "|" +
+//                        (textField.posX + selectionEndPosX) + "|" +
+//                        (textField.posY + lineHeight * (selectionBeginLine + 1))+"\n"
+//        );
+//        RenderUtils.drawRect(
+//                textField.posX + selectionBeginPosX,
+//                textField.posY + lineHeight * selectionBeginLine,
+//                textField.posX + selectionEndPosX,
+//                textField.posY + lineHeight * (selectionBeginLine + 1)
+//        );
+        //System.out.println(lineHeight);
+        RenderUtils.awtColor(textField.selectionColor);
         if (lineDiff > 0) {
             // drag to down
-            if (mouseEndPosY > textView.height) {
-                // cursor under the textView
-                textView.selectionEndIndex = lastRenderedIndex;
+            if (mouseEndPosY > textField.height) {
+                // cursor under the textField
+                textField.selectionEndIndex = lastRenderedIndex;
                 RenderUtils.drawRect(
-                        textView.posX + selectionBeginPosX,
-                        textView.posY + lineHeight * selectionBeginLine,
-                        textView.posX + textView.width,
-                        textView.posY + lineHeight * (selectionBeginLine + 1)
+                        textField.posX + selectionBeginPosX,
+                        textField.posY + lineHeight * selectionBeginLine,
+                        textField.posX + textField.width,
+                        textField.posY + lineHeight * (selectionBeginLine + 1)
                 );
                 for (int i = selectionBeginLine + 1; i < lines; i++) {
                     RenderUtils.drawRect(
-                            textView.posX,
-                            textView.posY + lineHeight * i,
-                            textView.posX + textView.width,
-                            textView.posY + lineHeight * (i + 1)
+                            textField.posX,
+                            textField.posY + lineHeight * i,
+                            textField.posX + textField.width,
+                            textField.posY + lineHeight * (i + 1)
                     );
                 }
             } else {
-                // cursor in the textView
+                // cursor in the textField
                 RenderUtils.drawRect(
-                        textView.posX + selectionBeginPosX,
-                        textView.posY + lineHeight * selectionBeginLine,
-                        textView.posX + textView.width,
-                        textView.posY + lineHeight * (selectionBeginLine + 1)
+                        textField.posX + selectionBeginPosX,
+                        textField.posY + lineHeight * selectionBeginLine,
+                        textField.posX + textField.width,
+                        textField.posY + lineHeight * (selectionBeginLine + 1)
                 );
                 for (int i = selectionBeginLine + 1; i < selectionEndLine; i++) {
                     RenderUtils.drawRect(
-                            textView.posX,
-                            textView.posY + lineHeight * i,
-                            textView.posX + textView.width,
-                            textView.posY + lineHeight * (i + 1)
+                            textField.posX,
+                            textField.posY + lineHeight * i,
+                            textField.posX + textField.width,
+                            textField.posY + lineHeight * (i + 1)
                     );
                 }
                 RenderUtils.drawRect(
-                        textView.posX,
-                        textView.posY + lineHeight * selectionEndLine,
-                        textView.posX + selectionEndPosX,
-                        textView.posY + lineHeight * (selectionEndLine + 1)
+                        textField.posX,
+                        textField.posY + lineHeight * selectionEndLine,
+                        textField.posX + selectionEndPosX,
+                        textField.posY + lineHeight * (selectionEndLine + 1)
                 );
             }
             // ==== //
         } else if (lineDiff < 0) {
             // drag to up
             if (mouseEndPosY < 0) {
-                // cursor over the textView
-                textView.selectionEndIndex = 0;
+                // cursor over the textField
+                textField.selectionEndIndex = 0;
                 RenderUtils.drawRect(
-                        textView.posX,
-                        textView.posY + lineHeight * selectionBeginLine,
-                        textView.posX + selectionBeginPosX,
-                        textView.posY + lineHeight * (selectionBeginLine + 1)
+                        textField.posX,
+                        textField.posY + lineHeight * selectionBeginLine,
+                        textField.posX + selectionBeginPosX,
+                        textField.posY + lineHeight * (selectionBeginLine + 1)
                 );
                 for (int i = 0; i < selectionBeginLine; i++) {
                     RenderUtils.drawRect(
-                            textView.posX,
-                            textView.posY + lineHeight * i,
-                            textView.posX + textView.width,
-                            textView.posY + lineHeight * (i + 1)
+                            textField.posX,
+                            textField.posY + lineHeight * i,
+                            textField.posX + textField.width,
+                            textField.posY + lineHeight * (i + 1)
                     );
                 }
             } else {
-                // cursor in the textView
+                // cursor in the textField
                 RenderUtils.drawRect(
-                        textView.posX,
-                        textView.posY + lineHeight * selectionBeginLine,
-                        textView.posX + selectionBeginPosX,
-                        textView.posY + lineHeight * (selectionBeginLine + 1)
+                        textField.posX,
+                        textField.posY + lineHeight * selectionBeginLine,
+                        textField.posX + selectionBeginPosX,
+                        textField.posY + lineHeight * (selectionBeginLine + 1)
                 );
                 for (int i = selectionEndLine + 1; i < selectionBeginLine; i++) {
                     RenderUtils.drawRect(
-                            textView.posX,
-                            textView.posY + lineHeight * i,
-                            textView.posX + textView.width,
-                            textView.posY + lineHeight * (i + 1)
+                            textField.posX,
+                            textField.posY + lineHeight * i,
+                            textField.posX + textField.width,
+                            textField.posY + lineHeight * (i + 1)
                     );
                 }
                 RenderUtils.drawRect(
-                        textView.posX + selectionEndPosX,
-                        textView.posY + lineHeight * selectionEndLine,
-                        textView.posX + textView.width,
-                        textView.posY + lineHeight * (selectionEndLine + 1)
+                        textField.posX + selectionEndPosX,
+                        textField.posY + lineHeight * selectionEndLine,
+                        textField.posX + textField.width,
+                        textField.posY + lineHeight * (selectionEndLine + 1)
                 );
             }
 
@@ -242,24 +264,24 @@ public class ViewRenderer {
             if (selectionEndPosX > selectionBeginPosX) {
                 // drag left to right
                 RenderUtils.drawRect(
-                        textView.posX + selectionBeginPosX,
-                        textView.posY + lineHeight * selectionBeginLine,
-                        textView.posX + selectionEndPosX,
-                        textView.posY + lineHeight * (selectionBeginLine + 1)
+                        textField.posX + selectionBeginPosX,
+                        textField.posY + lineHeight * selectionBeginLine,
+                        textField.posX + selectionEndPosX,
+                        textField.posY + lineHeight * (selectionBeginLine + 1)
                 );
             } else {
                 // drag right to left
                 RenderUtils.drawRect(
-                        textView.posX + selectionEndPosX,
-                        textView.posY + lineHeight * selectionBeginLine,
-                        textView.posX + selectionBeginPosX,
-                        textView.posY + lineHeight * (selectionBeginLine + 1)
+                        textField.posX + selectionEndPosX,
+                        textField.posY + lineHeight * selectionBeginLine,
+                        textField.posX + selectionBeginPosX,
+                        textField.posY + lineHeight * (selectionBeginLine + 1)
                 );
             }
             // ==== //
         }
 
         GL11.glColor4f(1, 1, 1, 1);
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+
     }
 }

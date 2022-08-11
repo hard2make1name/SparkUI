@@ -1,0 +1,55 @@
+//    @Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/settings/KeyBinding;setKeyBindState(IZ)V"))
+//    private void keyboardNext(CallbackInfo callbackInfo) {
+//        UIStatics.uiEventManager.onEvent(new UIKeyEvent());
+//        System.out.printf(
+//                "getEventCharacter(): {char:%c,int:%d}, getEventKey(): %d,getEventKeyState(): %b,isRepeatEvent() : %b,getNumKeyboardEvents() : %d getEventNanoseconds() : %s\n"
+//                , Keyboard.getEventCharacter()
+//                , (int) Keyboard.getEventCharacter()
+//                , Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey()
+//                , Keyboard.getEventKeyState()
+//                , Keyboard.isRepeatEvent()
+//                , Keyboard.getNumKeyboardEvents()
+//                , String.valueOf(Keyboard.getEventNanoseconds())
+//        );
+//    }
+    //鼠标动了这个会打印原先的key事件
+
+    ///    @Inject(remap = false, method = "runTick", at = @At(value = "INVOKE", target = "Lorg/lwjgl/input/Keyboard;getEventKey()I", shift = At.Shift.NONE))
+    //    private void keyboardNext(CallbackInfo callbackInfo) {
+    //        long keyNano = Keyboard.getEventNanoseconds();
+    //        if (keyNano == this.lastKeyNano || (Keyboard.getEventKeyState() || Keyboard.getEventKey() == 0 && Character.isDefined(Keyboard.getEventCharacter()))) {
+    //            return;
+    //        }
+    //        this.lastKeyNano = keyNano;
+    //
+    //        UIStatics.uiEventManager.onEvent(new UIKeyEvent());
+    //        System.out.printf(
+    //                "getEventCharacter(): {char:%c,int:%d}, getEventKey(): %d,getEventKeyState(): %b,isRepeatEvent() : %b,getNumKeyboardEvents() : %d getEventNanoseconds() : %s\n"
+    //                , Keyboard.getEventCharacter()
+    //                , (int) Keyboard.getEventCharacter()
+    //                , Keyboard.getEventKey()
+    //                , Keyboard.getEventKeyState()
+    //                , Keyboard.isRepeatEvent()
+    //                , Keyboard.getNumKeyboardEvents()
+    //                , String.valueOf(Keyboard.getEventNanoseconds())
+    //        );
+    //
+    //        // 按键之后会打印两次，结果完全相同，getEventNanoseconds也是，这是为什么? 在 dispatchKeypresses 却没有这种状况 :O
+    //    }
+
+
+    //    @Inject(method = "dispatchKeypresses", at = @At(value = "HEAD"))
+//    private void onKey(CallbackInfo callbackInfo) {
+//        UIStatics.uiEventManager.onEvent(new UIKeyEvent());
+//        System.out.printf(
+//                "getEventCharacter(): {char:%c,int:%d}, getEventKey(): %d,getEventKeyState(): %b,isRepeatEvent() : %b,getNumKeyboardEvents() : %d getEventNanoseconds() : %s\n"
+//                , Keyboard.getEventCharacter()
+//                , (int) Keyboard.getEventCharacter()
+//                , Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey()
+//                , Keyboard.getEventKeyState()
+//                , Keyboard.isRepeatEvent()
+//                , Keyboard.getNumKeyboardEvents()
+//                , String.valueOf(Keyboard.getEventNanoseconds())
+//        );
+//
+//    }

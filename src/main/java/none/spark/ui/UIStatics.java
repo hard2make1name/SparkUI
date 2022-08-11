@@ -1,7 +1,5 @@
 package none.spark.ui;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
 import none.spark.ui.event.UIEventManager;
 import none.spark.ui.font.FontRenderer;
 import none.spark.ui.font.GlyphPool;

@@ -11,15 +11,9 @@ import java.nio.ByteBuffer;
 public final class RenderUtils {
 
     // In Java, float or double? https://www.cnblogs.com/zzzz76/p/6881805.html
-    // TODO guiScale 目前还是自行缩放
+    // I prefer float, I think it isn't necessary to use double
     // 不会用 GL11 就去学，别再表演用 4 个 drawRect 画边框的神奇操作出来
-    /*
-        float scale = new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
-        GL11.glPushMatrix();
-        GL11.glScalef(1.0f / scale, 1.0f / scale, 1.0f);
-        ...
-        GL11.glPopMatrix();
-    */
+    // If you don't know how to use GL11, don't perform the magic of drawing borders with 4 drawRect()
 
     public static final double _PI_divide_180 = (Math.PI / 180);
     public static final double _180_divide_PI = (180 / Math.PI);
@@ -66,6 +60,7 @@ public final class RenderUtils {
 
         GL11.glEnd();
     }
+
     public static void drawRectBorder(float x, float y, float x2, float y2) {
         GL11.glBegin(GL11.GL_LINE_LOOP);
 
@@ -260,9 +255,11 @@ public final class RenderUtils {
     }
 
     // https://www.cnblogs.com/1024Planet/p/5667110.html
-    // (0.0f, 0.0f)、(0.0f, 1.0f)、(1.0f, 1.0f)、(1.0f, 0.0f) 分别对应左下、左上、右上、右下角
-    // TexCoord 是上下翻转的
-    // TODO 有些东西不会获取状态
+    // 在 TexCoord 中 (0.0f, 0.0f)、(0.0f, 1.0f)、(1.0f, 1.0f)、(1.0f, 0.0f) 分别对应左下、左上、右上、右下角
+    // In TexCoord, (0.0f, 0.0f)、(0.0f, 1.0f)、(1.0f, 1.0f)、(1.0f, 0.0f) correspond to lower left, upper left, upper right, and lower right
+    // TexCoord 's position is vertical flipped
+    // TODO I don't know how to get the state of glShadeModel and glBlendFunc to restore the state after rendering
+
     public static void drawImage(int textureId, float x, float y, float x2, float y2) {
         GL11.glPushAttrib(GL11.GL_TEXTURE_2D | GL11.GL_BLEND);
 

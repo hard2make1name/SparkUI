@@ -32,9 +32,9 @@ public class Canvas extends View {
         this.views.add(view);
     }
 
-    public void onEvent(UIEvent uiEvent) {
-        for (View view : this.views) {
-            view.onEvent(uiEvent);
-        }
-    }
+//    public void onEvent(UIEvent uiEvent) {
+//        for (View view : this.views) {
+//            view.onEvent(uiEvent);
+//        }
+//    }
 }

@@ -23,31 +23,13 @@ public abstract class MixinGuiScreen {
 
     @Shadow
     public Minecraft mc;
-    @Shadow
-    public int width;
-    @Shadow
-    public int height;
-    @Shadow
-    public List<GuiButton> buttonList;
-    @Shadow
-    public FontRenderer fontRendererObj;
-
-    @Shadow
-    public void updateScreen() {
-    }
-
-    @Shadow
-    public abstract void handleComponentHover(IChatComponent component, int x, int y);
-
-    @Shadow
-    protected abstract void drawHoveringText(List<String> textLines, int x, int y);
 
     @Inject(method = "sendChatMessage(Ljava/lang/String;Z)V", at = @At("HEAD"), cancellable = true)
     private void messageSend(String msg, boolean addToChat, CallbackInfo callbackInfo) {
         String prefix = ".";
 
         if (msg.startsWith(prefix) && addToChat) {
-            // addToChat 就是按 上 键可以获取上次输的命令
+            // addToChat means you can press key UP to get the last message you have sent
             this.mc.ingameGUI.getChatGUI().addToSentMessages(msg);
             String[] args = msg.split(" ");
 
@@ -56,14 +38,15 @@ public abstract class MixinGuiScreen {
         }
     }
 
+    // The event hooks in MixinMinecraft is effective only not in GuiScreen
+    // So it is necessary to hook them there again
     @Inject(method = "handleMouseInput", at = @At("HEAD"))
     public void mixinHandleMouseInput(CallbackInfo callbackInfo) {
-        UIStatics.uiEventManager.onEvent(new UIMouseEvent());
+        UIStatics.uiEventManager.callEvent(new UIMouseEvent());
     }
 
     @Inject(method = "handleKeyboardInput", at = @At("HEAD"))
-    public void mixinHandleKeyboardInput(CallbackInfo callbackInfo){
-        UIStatics.uiEventManager.onEvent(new UIKeyEvent());
+    public void mixinHandleKeyboardInput(CallbackInfo callbackInfo) {
+        UIStatics.uiEventManager.callEvent(new UIKeyEvent());
     }
-
 }

@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
+// GG
 public class FontRenderer {
     public GlyphPool glyphPool;
     public boolean substitute;
@@ -28,9 +29,8 @@ public class FontRenderer {
     // guiScale: 0:auto 1:small 2:normal 3:large
     // Minecraft.getMinecraft().gameSettings.guiScale
     // 这样窗口怎么缩放，guiScale大或小，都不影响字体在屏幕的大小和绝对位置
-    // TODO 一直调用ScaledResolution有性能问题
+    // 我记得这个缩放似乎跟坐标有关系（记不清楚了，也许是x,y乘一个scale），但是现在开发没有用到
 
-    // 我记得这个缩放似乎跟坐标有关系（x,y乘一个scale），但是现在开发没有用到，怪了
     public void drawChar(int codePoint, int size, float x, float y) {
         Glyph finalGlyph = null;
         if (glyphPool.canDisplay(codePoint)) {

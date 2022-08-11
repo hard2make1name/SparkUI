@@ -18,7 +18,7 @@ import none.spark.ui.font.FontRenderer;
 import none.spark.ui.font.GlyphPool;
 import none.spark.ui.layer.Canvas;
 import none.spark.ui.layer.ViewRenderer;
-import none.spark.util.JarUtils;
+import none.spark.util.ExternalUtils;
 import org.lwjgl.opengl.Display;
 
 import java.io.*;
@@ -55,7 +55,7 @@ public class SparkUI {
 
         // remap
         try {
-            Remapper.parseSrg(JarUtils.getResourceInputStream("/mcp-srg.srg"));
+            Remapper.parseSrg(ExternalUtils.getResourceInputStream("/mcp-srg.srg"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -92,14 +92,14 @@ public class SparkUI {
     public void copyFontsToLocal() {
         try {
             BufferedReader reader;
-            reader = new BufferedReader(new InputStreamReader(JarUtils.getResourceInputStream("/fonts/list"), StandardCharsets.UTF_8));
+            reader = new BufferedReader(new InputStreamReader(ExternalUtils.getResourceInputStream("/fonts/list"), StandardCharsets.UTF_8));
 
             String name;
             while ((name = reader.readLine()) != null) {
                 File localFont = new File(this.fileManager.getDir("fonts"), name);
                 if (!localFont.exists()) {
                     // copy
-                    InputStream is = JarUtils.getResourceInputStream("/fonts/" + name);
+                    InputStream is = ExternalUtils.getResourceInputStream("/fonts/" + name);
                     FileOutputStream fos = new FileOutputStream(localFont);
                     byte[] b = new byte[1024];
                     int length;
