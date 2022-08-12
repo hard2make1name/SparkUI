@@ -1,6 +1,7 @@
 package none.spark.ui.layer;
 
 import none.spark.Statics;
+import none.spark.manager.GLCapStack;
 import none.spark.ui.UIStatics;
 import none.spark.ui.font.Glyph;
 import none.spark.ui.font.GlyphPool;
@@ -76,7 +77,7 @@ public class ViewRenderer {
         float lineHeight = glyphPool.getFontMetrics(textField.fontSize).getHeight();
         float totalHeight = 0;
         int lines = 0;
-        float spaceWidth = getGlyph(CODEPOINT_SPACE, textField.fontSize, textField.fontSubstitute).width;
+        //float spaceWidth = getGlyph(CODEPOINT_SPACE, textField.fontSize, textField.fontSubstitute).width;
 
         // 这些坐标是相对于 textField 的左上角的
         int mouseBeginPosX = textField.mouseBeginPosX - textField.posX;
@@ -145,32 +146,16 @@ public class ViewRenderer {
             lineWidth += finalGlyph.width;
             indexCount++;
         }
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
-
         // render text selection :)
         int lineDiff = selectionEndLine - selectionBeginLine;
-//        System.out.printf(
-//                "lineDiff:%d " +
-//                        "selectionBeginPosX: %d "+
-//                        "selectionEndPosX: %d "+
-//                        "\n",
-//                lineDiff,
-//                selectionBeginPosX,
-//                selectionEndPosX
-//        );
-//        System.out.print(
-//                (textField.posX + selectionBeginPosX) + "|" +
-//                        (textField.posY + lineHeight * selectionBeginLine) + "|" +
-//                        (textField.posX + selectionEndPosX) + "|" +
-//                        (textField.posY + lineHeight * (selectionBeginLine + 1))+"\n"
-//        );
-//        RenderUtils.drawRect(
-//                textField.posX + selectionBeginPosX,
-//                textField.posY + lineHeight * selectionBeginLine,
-//                textField.posX + selectionEndPosX,
-//                textField.posY + lineHeight * (selectionBeginLine + 1)
-//        );
-        //System.out.println(lineHeight);
+
+        GLCapStack.push(GL11.GL_BLEND, GL11.GL_TEXTURE_2D);
+
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
         RenderUtils.awtColor(textField.selectionColor);
         if (lineDiff > 0) {
             // drag to down
@@ -280,8 +265,8 @@ public class ViewRenderer {
             }
             // ==== //
         }
-
+        GLCapStack.pop();
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
         GL11.glColor4f(1, 1, 1, 1);
-
     }
 }

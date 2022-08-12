@@ -19,7 +19,6 @@ public class AbstractJavaLinkerHandler {
             String remapped = Remapper.remapMethod(currentClass, name, Type.getMethodDescriptor((Method) accessibleObject));
 
             if (!name.equals(remapped)) {
-                System.out.print(remapped+"\n");
                 return remapped;
             }
 
@@ -29,7 +28,6 @@ public class AbstractJavaLinkerHandler {
 
             currentClass = currentClass.getSuperclass();
         }
-        System.out.print(name+"\n");
         return name;
     }
 
@@ -40,7 +38,6 @@ public class AbstractJavaLinkerHandler {
             String remapped = Remapper.remapField(currentClass, name);
 
             if (!name.equals(remapped)) {
-                System.out.print(remapped+"\n");
                 return remapped;
             }
 
@@ -50,7 +47,6 @@ public class AbstractJavaLinkerHandler {
 
             currentClass = currentClass.getSuperclass();
         }
-        System.out.print(name+"\n");
         return name;
     }
 
@@ -61,7 +57,6 @@ public class AbstractJavaLinkerHandler {
             String remapped = Remapper.remapField(currentClass, name);
 
             if (!name.equals(remapped)) {
-                System.out.print(remapped+"\n");
                 return remapped;
             }
 
@@ -71,7 +66,6 @@ public class AbstractJavaLinkerHandler {
 
             currentClass = currentClass.getSuperclass();
         }
-        System.out.print(name+"\n");
         return name;
     }
 }

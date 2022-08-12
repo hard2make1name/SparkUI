@@ -1,5 +1,6 @@
 package none.spark.ui.util;
 
+import none.spark.manager.GLCapStack;
 import none.spark.ui.UIStatics;
 import org.lwjgl.opengl.GL11;
 
@@ -12,18 +13,20 @@ public final class RenderUtils {
 
     // In Java, float or double? https://www.cnblogs.com/zzzz76/p/6881805.html
     // I prefer float, I think it isn't necessary to use double
+
     // 不会用 GL11 就去学，别再表演用 4 个 drawRect 画边框的神奇操作出来
     // If you don't know how to use GL11, don't perform the magic of drawing borders with 4 drawRect()
-
+    // 有关于 GL11.glEnable() 和 GL11.glDisable() 的操作时，在前面加上一句GLCapStack.push()
+    //
     public static final double _PI_divide_180 = (Math.PI / 180);
     public static final double _180_divide_PI = (180 / Math.PI);
 
     public static int getRGB(int r, int g, int b) {
-        return ((255 & 0xFF) << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | ((b & 0xFF) << 0);
+        return ((0xFF) << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | ((b & 0xFF));
     }
 
     public static int getARGB(int a, int r, int g, int b) {
-        return ((a & 0xFF) << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | ((b & 0xFF) << 0);
+        return ((a & 0xFF) << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | ((b & 0xFF));
     }
 
     public static void colorHex(int hex) {
@@ -31,17 +34,17 @@ public final class RenderUtils {
         GL11.glColor4f(
                 (hex >> 16 & 0xFF) / 255f,
                 (hex >> 8 & 0xFF) / 255f,
-                (hex >> 0 & 0xFF) / 255f,
+                (hex & 0xFF) / 255f,
                 (hex >> 24 & 0xFF) / 255f
         );
     }
 
     public static void awtColor(Color color) {
         GL11.glColor4f(
-                ((float) color.getRed()) / 255.0f,
-                ((float) color.getGreen()) / 255.0f,
-                ((float) color.getBlue()) / 255.0f,
-                ((float) color.getAlpha()) / 255.0f
+                (color.getRed()) / 255.0f,
+                (color.getGreen()) / 255.0f,
+                (color.getBlue()) / 255.0f,
+                (color.getAlpha()) / 255.0f
         );
     }
 
@@ -51,6 +54,7 @@ public final class RenderUtils {
     }
 
     public static void drawRect(float x, float y, float x2, float y2) {
+        //Gui.drawRect((int)x, (int) y,(int)x2,(int)y2,RenderUtils.getARGB(128,255,255,255));
         GL11.glBegin(GL11.GL_QUADS);
 
         GL11.glVertex2f(x2, y);
@@ -261,8 +265,7 @@ public final class RenderUtils {
     // TODO I don't know how to get the state of glShadeModel and glBlendFunc to restore the state after rendering
 
     public static void drawImage(int textureId, float x, float y, float x2, float y2) {
-        GL11.glPushAttrib(GL11.GL_TEXTURE_2D | GL11.GL_BLEND);
-
+        GLCapStack.push(GL11.GL_BLEND, GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
 
@@ -283,7 +286,5 @@ public final class RenderUtils {
         GL11.glVertex2f(x2, y2);//右下
 
         GL11.glEnd();
-
-        GL11.glPopAttrib();
     }
 }

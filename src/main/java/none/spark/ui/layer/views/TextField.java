@@ -15,7 +15,7 @@ public class TextField extends View {
     public Color fontColor = Color.WHITE;
     public boolean fontSubstitute = true;
     public String text = "Hello, TextField!";
-    public Color selectionColor = new Color(183, 224, 220, 255);
+    public Color selectionColor = new Color(0, 0, 255, 255);
     public boolean lineWrap = true;// 遇到 \n 换行
     public boolean autoLineWrap = true;// 文本自动换行
     public boolean horizontalOverflow = false;// false : 文本不显示超出垂直边界的部分 ,true : 文本可以超出水平边界，继续显示
