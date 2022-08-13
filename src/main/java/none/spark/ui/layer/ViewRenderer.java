@@ -77,7 +77,7 @@ public class ViewRenderer {
         float lineHeight = glyphPool.getFontMetrics(textField.fontSize).getHeight();
         float totalHeight = 0;
         int lines = 0;
-        //float spaceWidth = getGlyph(CODEPOINT_SPACE, textField.fontSize, textField.fontSubstitute).width;
+        float spaceWidth = getGlyph(CODEPOINT_SPACE, textField.fontSize, textField.fontSubstitute).width;
 
         // 这些坐标是相对于 textField 的左上角的
         int mouseBeginPosX = textField.mouseBeginPosX - textField.posX;
@@ -91,6 +91,8 @@ public class ViewRenderer {
         int selectionEndPosX = 0;
 
         int lastRenderedIndex = 0;
+        int lastRenderedPosX = 0;
+        int lastRenderedPosY = 0;
 
         int[] codePoints = textField.text.codePoints().toArray();
         Glyph finalGlyph;
@@ -101,8 +103,9 @@ public class ViewRenderer {
                     lineWidth = 0;
                     totalHeight += lineHeight;
                     lines++;
+                } else {
+                    lineWidth += spaceWidth * 2;
                 }
-                //lineWidth += spaceWidth * 2;
                 continue;
             }
 
@@ -118,13 +121,17 @@ public class ViewRenderer {
                 textField.selectionEndIndex = indexCount;
             }
 
+            lastRenderedPosX = (int) lineWidth + finalGlyph.width;// idk & idc
+            lastRenderedPosY = (int) lineHeight * lines;
+            lastRenderedIndex = indexCount - 1;
+
             // 文字超过右边了，不渲染
             if (!textField.horizontalOverflow && lineWidth > textField.width) {
                 continue;
             }
             // 文字超过底下了，没救了
             if (!textField.verticalOverflow && totalHeight > textField.height) {
-                lastRenderedIndex = indexCount;
+                //lastRenderedIndex = indexCount;
                 break;
             }
             // 自动换行
@@ -146,6 +153,27 @@ public class ViewRenderer {
             lineWidth += finalGlyph.width;
             indexCount++;
         }
+        if (selectionBeginPosX == 0) {
+            // the cursor down on the textView but not touch any character
+            selectionBeginPosX = lastRenderedPosX;
+            selectionBeginLine = lines;
+            textField.selectionBeginIndex = textField.text.length();
+
+        }
+        if (selectionEndPosX == 0) {
+            // the cursor isn't select the last character,it is out
+            if (mouseEndPosY > lastRenderedPosY) {
+                // cursor is under
+                selectionEndPosX = lastRenderedPosX;
+                selectionEndLine = lines;
+                textField.selectionEndIndex = textField.text.length();
+            } else if (mouseEndPosY < 0) {
+                // cursor is over
+                selectionEndLine = 0;
+                textField.selectionEndIndex = 0;
+            }
+        }
+
         // render text selection :)
         int lineDiff = selectionEndLine - selectionBeginLine;
 

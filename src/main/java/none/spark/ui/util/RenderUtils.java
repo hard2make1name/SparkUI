@@ -22,7 +22,7 @@ public final class RenderUtils {
     public static final double _180_divide_PI = (180 / Math.PI);
 
     public static int getRGB(int r, int g, int b) {
-        return ((0xFF) << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | ((b & 0xFF));
+        return (0xFF << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | ((b & 0xFF));
     }
 
     public static int getARGB(int a, int r, int g, int b) {
@@ -226,14 +226,14 @@ public final class RenderUtils {
         for (int i : rgb) {
             byteBuffer.putInt(i << 8 | i >> 24 & 255);
         }
-        // Linux Open JDK 8 doesn't support byteBuffer.flip();
+        // Open JDK 8 on Linux doesn't support byteBuffer.flip();
         ((Buffer) byteBuffer).flip();
         return byteBuffer;
     }
 
     // 纹理: https://www.jianshu.com/p/1b327789220d
     // 设置纹理包装和过滤的方式
-    // GL_CLAMP_TP_EDGE 和 GL_CLAMP_TO_BORDER 和 GL_MIRRORED_REPEAT会报错 1280: Invalid enum
+    // GL_CLAMP_TP_EDGE 和 GL_CLAMP_TO_BORDER 和 GL_MIRRORED_REPEAT 会报错 1280: Invalid enum
     // May be because the enum is not available in this lwjgl
     public static int uploadTexture(BufferedImage bufferedImage) {
 
@@ -286,5 +286,6 @@ public final class RenderUtils {
         GL11.glVertex2f(x2, y2);//右下
 
         GL11.glEnd();
+        GLCapStack.pop();
     }
 }

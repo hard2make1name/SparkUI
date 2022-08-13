@@ -11,6 +11,7 @@ public final class GLCapStack {
 
     // Why GL11.glPushAttrib() and GL11.glPopAttrib() doesn't work ???
     // Then I made it.
+    // I can't know when it will underflow or overflow because of your wrongs, so you'd better be careful
 
     public static void push(int... caps) {
         for (int cap : caps) {
