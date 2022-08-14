@@ -20,6 +20,7 @@ public final class RenderUtils {
     //
     public static final double _PI_divide_180 = (Math.PI / 180);
     public static final double _180_divide_PI = (180 / Math.PI);
+    public static Color rainbowColor = RenderUtils.rainbow(40000L);
 
     public static int getRGB(int r, int g, int b) {
         return (0xFF << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | ((b & 0xFF));
@@ -37,6 +38,9 @@ public final class RenderUtils {
                 (hex & 0xFF) / 255f,
                 (hex >> 24 & 0xFF) / 255f
         );
+    }
+    public static Color rainbow(long offset) {
+        return Color.getHSBColor((System.nanoTime() + offset) / 10000000000F % 1, 1F, 1F);
     }
 
     public static void awtColor(Color color) {

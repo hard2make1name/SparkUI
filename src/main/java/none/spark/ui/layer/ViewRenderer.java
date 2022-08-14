@@ -9,6 +9,8 @@ import none.spark.ui.layer.views.TextField;
 import none.spark.ui.util.RenderUtils;
 import org.lwjgl.opengl.GL11;
 
+import java.util.ArrayList;
+
 public class ViewRenderer {
     public static final GlyphPool glyphPool = UIStatics.glyphPool;
 
@@ -27,14 +29,6 @@ public class ViewRenderer {
         return null;
     }
 
-//    public void updateTextViewGlyphList(TextField textView) {
-//        textView.glyphList = new ArrayList<>();
-//
-//        int[] codePoints = textView.text.codePoints().toArray();
-//        for (int codePoint : codePoints) {
-//            textView.glyphList.add(this.getGlyph(codePoint, textView.fontSize, textView.fontSubstitute));
-//        }
-//    }
 
     // 报 switch 需要常量
 //    public enum CodePoint {
@@ -48,15 +42,15 @@ public class ViewRenderer {
     public static final int CODEPOINT_SPACE = " ".codePointAt(0);
 
 
-    public void renderCanvas(Canvas canvas) {
-        for (View view : canvas.views) {
-            if (view instanceof Canvas) {
-                this.renderCanvas((Canvas) view);
-            } else if (view instanceof TextField) {
-                this.renderTextField((TextField) view);
-            }
-        }
-    }
+//    public void renderCanvas(Canvas canvas) {
+//        for (View view : canvas.views) {
+//            if (view instanceof Canvas) {
+//                this.renderCanvas((Canvas) view);
+//            } else if (view instanceof TextField) {
+//                this.renderTextField((TextField) view);
+//            }
+//        }
+//    }
 
     public void renderTextField(TextField textField) {
         // 上色
@@ -77,6 +71,7 @@ public class ViewRenderer {
         float lineHeight = glyphPool.getFontMetrics(textField.fontSize).getHeight();
         float totalHeight = 0;// 起始点是左上角
         int lines = 0;
+        ArrayList<Float> lineWidthList = new ArrayList<>();
         float spaceWidth = getGlyph(CODEPOINT_SPACE, textField.fontSize, textField.fontSubstitute).width;
 
         // 这些坐标是相对于 textField 的左上角的
@@ -92,20 +87,16 @@ public class ViewRenderer {
         int selectionEndPosX = 0;
         boolean isSelectionEndCaught = false;
 
-        int lastRenderedIndex = 0;
         int lastRenderedPosX = 0;
         int lastRenderedPosY = 0;
 
-        // 当 totalHeight > textField.height 时
+        // 当 totalHeight + lineHeight > textField.height 时
         // 进入底部临界，之后的文字在 glScissor 后可能会只见一半
-
-        boolean bottomCritical = false;
 
         int[] codePoints = textField.text.codePoints().toArray();
         Glyph finalGlyph;
         int indexCount = 0;
         for (int codePoint : codePoints) {
-            // 渲染前，数据未更改
 
             // 控制符逻辑
             if (codePoint == CODEPOINT_NEW_LINE) {
@@ -115,17 +106,21 @@ public class ViewRenderer {
                             // 已经底部临界，再换行就看不到了
                             break;
                         } else {
+                            lineWidth += spaceWidth;
+                            lineWidthList.add(lineWidth);
                             lineWidth = 0;
                             totalHeight += lineHeight;
                             lines++;
                         }
                     } else {
+                        lineWidth += spaceWidth;
+                        lineWidthList.add(lineWidth);
                         lineWidth = 0;
                         totalHeight += lineHeight;
                         lines++;
                     }
                 } else {
-                    lineWidth += spaceWidth * 2;
+                    lineWidth += spaceWidth;
                 }
                 continue;
             }
@@ -133,45 +128,47 @@ public class ViewRenderer {
             finalGlyph = getGlyph(codePoint, textField.fontSize, textField.fontSubstitute);
 
             // autoLineWrap
-//            if (textField.autoLineWrap && lineWidth + finalGlyph.width > textField.width) {
-//                lineWidth = 0;
-//                totalHeight += lineHeight;
-//                lines++;
-//            }
             if (textField.autoLineWrap && lineWidth + finalGlyph.width > textField.width) {
                 if (!textField.verticalOverflow) {
                     if (totalHeight + lineHeight > textField.height) {
                         // 已经底部临界，再换行就看不到了
                         break;
                     } else {
+                        lineWidth += spaceWidth;
+                        lineWidthList.add(lineWidth);
                         lineWidth = 0;
                         totalHeight += lineHeight;
                         lines++;
                     }
                 } else {
+                    lineWidth += spaceWidth;
+                    lineWidthList.add(lineWidth);
                     lineWidth = 0;
                     totalHeight += lineHeight;
                     lines++;
                 }
             }
 
-            // 抓取鼠标起始位置
-            if (lines == selectionBeginLine && mouseBeginPosX > lineWidth - finalGlyph.width / 2f && mouseBeginPosX < lineWidth + finalGlyph.width / 2f && selectionBeginPosX == 0) {
-                selectionBeginPosX = (int) lineWidth;// 字符的左边
-                textField.selectionBeginIndex = indexCount;
-                isSelectionBeginCaught = true;
-            }
-            // 抓取鼠标结束位置
-            if (lines == selectionEndLine && mouseEndPosX >= lineWidth + finalGlyph.width / 2f && mouseEndPosX <= lineWidth + finalGlyph.width + finalGlyph.width / 2f && selectionEndPosX == 0) {
-                selectionEndPosX = (int) lineWidth + finalGlyph.width;// 字符的右边
-                textField.selectionEndIndex = indexCount + 1;
-                isSelectionEndCaught = true;
+            if (textField.selectable) {
+                // catch the beginning of cursor
+                if (lines == selectionBeginLine && mouseBeginPosX > lineWidth - finalGlyph.width / 2f && mouseBeginPosX < lineWidth + finalGlyph.width / 2f && selectionBeginPosX == 0) {
+                    selectionBeginPosX = (int) lineWidth;// 字符的左边
+                    textField.selectionBeginIndex = indexCount;
+                    isSelectionBeginCaught = true;
+                }
+                // catch the ending of cursor
+                if (lines == selectionEndLine && mouseEndPosX >= lineWidth + finalGlyph.width / 2f && mouseEndPosX <= lineWidth + finalGlyph.width + finalGlyph.width / 2f && selectionEndPosX == 0) {
+                    selectionEndPosX = (int) lineWidth + finalGlyph.width;// 字符的右边
+                    textField.selectionEndIndex = indexCount + 1;
+                    isSelectionEndCaught = true;
+                }
+
+                lastRenderedPosX = (int) lineWidth + finalGlyph.width;// 字符的右边
+                lastRenderedPosY = (int) lineHeight * lines;
             }
 
-            lastRenderedPosX = (int) lineWidth + finalGlyph.width;// 字符的右边
-            lastRenderedPosY = (int) lineHeight * lines;
-            lastRenderedIndex = indexCount;
-
+            // 右边不渲染？
+            //if (textField.horizontalOverflow || !(lineWidth > textField.width)) {
             RenderUtils.drawImage(
                     finalGlyph.textureId,
                     textField.posX + lineWidth,
@@ -179,10 +176,16 @@ public class ViewRenderer {
                     textField.posX + lineWidth + finalGlyph.width,
                     textField.posY + totalHeight + finalGlyph.height
             );
-            // 渲染后，数据已更改
+            //}
+
             lineWidth += finalGlyph.width;
             indexCount++;
         }
+
+        if (!textField.selectable) {
+            return;
+        }
+
         if (!isSelectionBeginCaught) {
             // the cursor down on the textView at first, but not touch any character
             selectionBeginPosX = lastRenderedPosX;
@@ -215,14 +218,14 @@ public class ViewRenderer {
             RenderUtils.drawRect(
                     textField.posX + selectionBeginPosX,
                     textField.posY + lineHeight * selectionBeginLine,
-                    textField.posX + textField.width,
+                    textField.posX + lineWidthList.get(selectionBeginLine),
                     textField.posY + lineHeight * (selectionBeginLine + 1)
             );
             for (int i = selectionBeginLine + 1; i < selectionEndLine; i++) {
                 RenderUtils.drawRect(
                         textField.posX,
                         textField.posY + lineHeight * i,
-                        textField.posX + textField.width,
+                        textField.posX + lineWidthList.get(i),
                         textField.posY + lineHeight * (i + 1)
                 );
             }
@@ -243,14 +246,14 @@ public class ViewRenderer {
                 RenderUtils.drawRect(
                         textField.posX,
                         textField.posY + lineHeight * i,
-                        textField.posX + textField.width,
+                        textField.posX + lineWidthList.get(i),
                         textField.posY + lineHeight * (i + 1)
                 );
             }
             RenderUtils.drawRect(
                     textField.posX + selectionEndPosX,
                     textField.posY + lineHeight * selectionEndLine,
-                    textField.posX + textField.width,
+                    textField.posX + lineWidthList.get(selectionEndLine),
                     textField.posY + lineHeight * (selectionEndLine + 1)
             );
         } else {

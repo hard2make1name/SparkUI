@@ -43,8 +43,6 @@ public class UIEventManager {
         }
     }
 
-    public boolean isControlDown = false;
-
     public void handleEvent(UIEvent uiEvent, View view) {
         // except Canvas
         if (uiEvent instanceof UIRender2DEvent) {
@@ -52,30 +50,32 @@ public class UIEventManager {
                 UIStatics.viewRenderer.renderTextField((TextField) view);
             }
         } else if (uiEvent instanceof UIKeyEvent) {
-            if (Keyboard.getEventKey() == 29 || Keyboard.getEventKey() == 157) {
-                this.isControlDown = Keyboard.getEventKeyState();
-            }
-            if (this.isControlDown && Keyboard.getEventKeyState()) {
-                if (Keyboard.getEventKey() == 46) {
+            if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
+                // Control Down //
+                if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
                     // Ctrl + C = Copy
                     if (view instanceof TextField) {
                         TextField textField = (TextField) view;
-                        if (textField.selectionEndIndex > textField.selectionBeginIndex) {
-                            ExternalUtils.setClipboardString(textField.text.substring(textField.selectionBeginIndex, textField.selectionEndIndex));
-                        } else {
-                            ExternalUtils.setClipboardString(textField.text.substring(textField.selectionEndIndex, textField.selectionBeginIndex ));
+                        if (textField.copyable) {
+                            if (textField.selectionEndIndex > textField.selectionBeginIndex) {
+                                ExternalUtils.setClipboardString(textField.text.substring(textField.selectionBeginIndex, textField.selectionEndIndex));
+                            } else {
+                                ExternalUtils.setClipboardString(textField.text.substring(textField.selectionEndIndex, textField.selectionBeginIndex));
+                            }
                         }
                     }
                 }
+                // Control Down //
             }
+
             //DebugUtils.printKeyboardDetails();
         } else if (uiEvent instanceof UIMouseEvent) {
             if (Mouse.getEventButton() != -1) {
-                // Some mouse's button state was change
+                // Some mouse's button state changed
                 if (Mouse.getEventButtonState()) {
-                    // Mouse down
+                    // Mouse down //
                     if (Mouse.isButtonDown(0)) {
-                        // Left down
+                        // Left down //
                         if (view instanceof TextField) {
                             TextField textField = (TextField) view;
                             int mouseX = Mouse.getEventX();
@@ -89,23 +89,26 @@ public class UIEventManager {
                                 textField.mouseBeginPosY = mouseY;
                                 textField.mouseEndPosX = mouseX;
                                 textField.mouseEndPosY = mouseY;
-                                //textField.focus = true;
-                            }/* else {
                                 textField.focus = true;
-                            }*/
+                            } else {
+                                textField.focus = false;
+                            }
                         }
+                        // Left down //
                     }
+                    // Mouse down //
                 }
             } else {
                 if (Mouse.isButtonDown(0)) {
-                    // Left dragging
+                    // Left dragging //
                     if (view instanceof TextField) {
                         TextField textField = (TextField) view;
-                        //if (textField.focus) {
-                        textField.mouseEndPosX = Mouse.getEventX();
-                        textField.mouseEndPosY = UIStatics.gameCanvas.height - Mouse.getEventY();
-                        //}
+                        if (textField.focus) {
+                            textField.mouseEndPosX = Mouse.getEventX();
+                            textField.mouseEndPosY = UIStatics.gameCanvas.height - Mouse.getEventY();
+                        }
                     }
+                    // Left dragging //
                 }
             }
         }
