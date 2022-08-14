@@ -54,7 +54,16 @@ public final class RenderUtils {
     }
 
     public static void drawRect(float x, float y, float x2, float y2) {
-        //Gui.drawRect((int)x, (int) y,(int)x2,(int)y2,RenderUtils.getARGB(128,255,255,255));
+        if (x > x2) {
+            float temp = x;
+            x = x2;
+            x2 = temp;
+        }
+        if (y > y2) {
+            float temp = y;
+            y = y2;
+            y2 = temp;
+        }
         GL11.glBegin(GL11.GL_QUADS);
 
         GL11.glVertex2f(x2, y);

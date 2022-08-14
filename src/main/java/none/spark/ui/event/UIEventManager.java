@@ -7,7 +7,6 @@ import none.spark.ui.event.events.UIRender2DEvent;
 import none.spark.ui.layer.Canvas;
 import none.spark.ui.layer.View;
 import none.spark.ui.layer.views.TextField;
-import none.spark.util.DebugUtils;
 import none.spark.util.ExternalUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -64,7 +63,7 @@ public class UIEventManager {
                         if (textField.selectionEndIndex > textField.selectionBeginIndex) {
                             ExternalUtils.setClipboardString(textField.text.substring(textField.selectionBeginIndex, textField.selectionEndIndex));
                         } else {
-                            ExternalUtils.setClipboardString(textField.text.substring(textField.selectionEndIndex, textField.selectionBeginIndex));
+                            ExternalUtils.setClipboardString(textField.text.substring(textField.selectionEndIndex, textField.selectionBeginIndex ));
                         }
                     }
                 }
@@ -103,8 +102,8 @@ public class UIEventManager {
                     if (view instanceof TextField) {
                         TextField textField = (TextField) view;
                         //if (textField.focus) {
-                            textField.mouseEndPosX = Mouse.getEventX();
-                            textField.mouseEndPosY = UIStatics.gameCanvas.height - Mouse.getEventY();
+                        textField.mouseEndPosX = Mouse.getEventX();
+                        textField.mouseEndPosY = UIStatics.gameCanvas.height - Mouse.getEventY();
                         //}
                     }
                 }
