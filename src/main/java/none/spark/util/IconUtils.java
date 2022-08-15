@@ -14,15 +14,10 @@ public final class IconUtils {
     public static final String ICON_32X_PATH = "/icon_32x32.png";
 
     public static ByteBuffer[] getIconByteBuffer() {
-        try {
-            return new ByteBuffer[]{
-                    readImageToBuffer(ExternalUtils.getResourceInputStream(ICON_16X_PATH)),
-                    readImageToBuffer(ExternalUtils.getResourceInputStream(ICON_32X_PATH))
-            };
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return new ByteBuffer[]{
+                readImageToBuffer(ExternalUtils.getResourceInputStream(ICON_16X_PATH)),
+                readImageToBuffer(ExternalUtils.getResourceInputStream(ICON_32X_PATH))
+        };
     }
 
     public static ByteBuffer readImageToBuffer(final InputStream imageStream) {
@@ -34,6 +29,7 @@ public final class IconUtils {
             for (int i : rgb) {
                 byteBuffer.putInt(i << 8 | i >> 24 & 255);
             }
+            // Open JDK 8 on Linux doesn't support byteBuffer.flip();
             ((Buffer) byteBuffer).flip();
             return byteBuffer;
         } catch (IOException e) {

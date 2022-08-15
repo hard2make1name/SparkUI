@@ -25,6 +25,9 @@ public final class DebugUtils {
         // 这个不需要了，hook 的时候已经处理了
         // This is not needed, it has been handled in the hook
     */
+    public static void info(String str) {
+        System.out.println("[SparkUI] " + str);
+    }
 
     public static void printKeyboardDetails() {
         System.out.printf(

@@ -26,7 +26,7 @@ public class MixinFMLCommonHandler {
     //@Inject(remap = false, cancellable = true,method = "computeBranding", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableList/Builder;add(T)com/google/common/collect/ImmutableList/Builder;"))
     public void computeBrandingMixin(CallbackInfo callbackInfo) {
         if (brandings == null) {
-            ImmutableList.Builder<String> brd = ImmutableList.<String>builder();
+            ImmutableList.Builder<String> brd = ImmutableList.builder();
             brd.add("SparkUI");
             brd.add(Loader.instance().getMCVersionString());
             brd.add(Loader.instance().getMCPVersionString());

@@ -25,6 +25,10 @@ public class TextField extends View {
     public boolean editable = false;
     public boolean selectable = false;
     public boolean copyable = false;
+    public boolean showCursor = false;
+
+    public boolean debugOutline = false;
+    public boolean debugNotScissor = false;
 
     public TextField() {
     }

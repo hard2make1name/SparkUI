@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class Script {
-    public File scriptFile;
+    public final File scriptFile;
     public String sourceCode;
     public ScriptEngine scriptEngine;
     public Invocable scriptInvocable;

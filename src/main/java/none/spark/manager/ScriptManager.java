@@ -1,6 +1,7 @@
 package none.spark.manager;
 
 import none.spark.script.Script;
+import none.spark.util.DebugUtils;
 
 import javax.script.ScriptException;
 import java.io.File;
@@ -26,7 +27,7 @@ public class ScriptManager {
         for (File file : files) {
             if (file.getName().toLowerCase().endsWith(".js")) {
                 scripts.add(new Script(file));
-                System.out.println("[SparkUI] Script " + file.getName() + " loaded.");
+                DebugUtils.info("Script " + file.getName() + " loaded.");
             }
         }
     }

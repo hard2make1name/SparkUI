@@ -17,7 +17,7 @@ public class UIEventManager {
 
     public static final Canvas gameCanvas = UIStatics.gameCanvas;
 
-    public ArrayList<View> targets = new ArrayList<>();
+    public final ArrayList<View> targets = new ArrayList<>();
 
     public UIEventManager() {
         this.targets.add(gameCanvas);

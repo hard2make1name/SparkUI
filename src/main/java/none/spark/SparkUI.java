@@ -18,6 +18,7 @@ import none.spark.ui.font.FontRenderer;
 import none.spark.ui.font.GlyphPool;
 import none.spark.ui.layer.Canvas;
 import none.spark.ui.layer.ViewRenderer;
+import none.spark.util.DebugUtils;
 import none.spark.util.ExternalUtils;
 import org.lwjgl.opengl.Display;
 
@@ -38,12 +39,12 @@ public class SparkUI {
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
-        System.out.println("[SparkUI] FML Initialization Event!");
+        DebugUtils.info("FML Initialization Event!");
     }
 
     public void run() {
         // 顺序不能乱调
-        System.out.println("[SparkUI] Client start running!");
+        DebugUtils.info("Client start running!");
 
         this.mc = Minecraft.getMinecraft();
         this.root = new File(this.mc.mcDataDir, "SparkUI");
@@ -54,11 +55,7 @@ public class SparkUI {
         this.fileManager.setupDirs();
 
         // remap
-        try {
-            Remapper.parseSrg(ExternalUtils.getResourceInputStream("/mcp-srg.srg"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Remapper.parseSrg(ExternalUtils.getResourceInputStream("/mcp-srg.srg"));
 
         this.copyFontsToLocal();
 
@@ -108,7 +105,7 @@ public class SparkUI {
                     }
                     fos.close();
                     is.close();
-                    System.out.println("[SparkUI] " + name + " has copied to " + localFont.getAbsolutePath());
+                    DebugUtils.info( name + " has copied to " + localFont.getAbsolutePath());
                 }
             }
         } catch (IOException e) {

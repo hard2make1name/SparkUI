@@ -32,16 +32,16 @@ public class EventManager {
         for (EventCallback eventCallback : this.eventListeners.get(event.getName())) {
             try {
                 eventCallback.callback(event);
-            } catch (Exception e) {
-                System.err.print("\nScriptException: \n" + e.getMessage() + "\n");
+            } catch (Throwable e) {
+                System.err.print("\nScriptException (In Event Callback): \n" + e.getMessage() + "\n");
                 StackTraceElement[] stackTraceElements = e.getStackTrace();
 
                 for (StackTraceElement stackTraceElement : stackTraceElements) {
                     if ("<eval>".equals(stackTraceElement.getFileName())) {
                         System.err.print("At line number: " + stackTraceElement.getLineNumber() + "\n");
                     }
-                    //System.out.print(stackTraceElement.getFileName() + "|" + stackTraceElement.getMethodName() + "|" + stackTraceElement.getLineNumber()+"|"+stackTraceElement.toString()+"\n");
                 }
+
             }
         }
     }

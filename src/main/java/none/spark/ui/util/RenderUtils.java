@@ -39,9 +39,6 @@ public final class RenderUtils {
                 (hex >> 24 & 0xFF) / 255f
         );
     }
-    public static Color rainbow(long offset) {
-        return Color.getHSBColor((System.nanoTime() + offset) / 10000000000F % 1, 1F, 1F);
-    }
 
     public static void awtColor(Color color) {
         GL11.glColor4f(
@@ -50,6 +47,18 @@ public final class RenderUtils {
                 (color.getBlue()) / 255.0f,
                 (color.getAlpha()) / 255.0f
         );
+    }
+
+    public static Color rainbow(long offset) {
+        return Color.getHSBColor((System.nanoTime() + offset) / 10000000000f % 1, 1f, 1f);
+    }
+
+    public static double toRadians(double degrees) {
+        return degrees * _PI_divide_180;
+    }
+
+    public static double toDegrees(double radians) {
+        return radians * _180_divide_PI;
     }
 
     public static void glScissorVerticalFlipped(int posX, int posY, int width, int height) {
@@ -79,6 +88,16 @@ public final class RenderUtils {
     }
 
     public static void drawRectBorder(float x, float y, float x2, float y2) {
+        if (x > x2) {
+            float temp = x;
+            x = x2;
+            x2 = temp;
+        }
+        if (y > y2) {
+            float temp = y;
+            y = y2;
+            y2 = temp;
+        }
         GL11.glBegin(GL11.GL_LINE_LOOP);
 
         GL11.glVertex2f(x2, y);
@@ -89,15 +108,28 @@ public final class RenderUtils {
         GL11.glEnd();
     }
 
-    public static double toRadians(double degrees) {
-        return degrees * _PI_divide_180;
+    public static void drawLine(float x, float y, float x2, float y2) {
+        // self setting: GL11.glLineWidth(lineWidth);
+        if (x > x2) {
+            float temp = x;
+            x = x2;
+            x2 = temp;
+        }
+        if (y > y2) {
+            float temp = y;
+            y = y2;
+            y2 = temp;
+        }
+
+        GL11.glBegin(GL11.GL_LINES);
+
+        GL11.glVertex2f(x, y);
+        GL11.glVertex2f(x2, y2);
+
+        GL11.glEnd();
     }
 
-    public static double toDegrees(double radians) {
-        return radians * _180_divide_PI;
-    }
-
-    public static void drawHollowCircle(double x, double y, double radius) {
+    public static void drawCircleBorder(double x, double y, double radius) {
         int sections = 50;
         double dAngle = 2 * Math.PI / sections;
         double xx;
@@ -165,7 +197,7 @@ public final class RenderUtils {
         GL11.glEnd();
     }
 
-    public static void drawHollowFan(double x, double y, double radius, double degree1, double degree2) {
+    public static void drawFanBorder(double x, double y, double radius, double degree1, double degree2) {
         if (degree1 > degree2) {
             double _deg = degree1;
             degree1 = degree2;

@@ -1,4 +1,3 @@
-
 package none.spark.injection.transformer;
 
 import net.minecraft.launchwrapper.IClassTransformer;
@@ -19,7 +18,7 @@ import static org.objectweb.asm.Opcodes.*;
 
 public class AbstractJavaLinkerTransformer implements IClassTransformer {
 
-    public static String thePath = "none/spark/injection/handler/AbstractJavaLinkerHandler";
+    public static final String thePath = "none/spark/injection/handler/AbstractJavaLinkerHandler";
 
     /**
      * Transform a class

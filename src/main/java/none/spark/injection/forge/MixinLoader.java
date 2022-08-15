@@ -28,6 +28,7 @@ public class MixinLoader implements IFMLLoadingPlugin {
                 ForgeNetworkTransformer.class.getName()
         };
     }
+
     @Override
     public String getModContainerClass() {
         return null;

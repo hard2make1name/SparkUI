@@ -26,7 +26,7 @@ public class ForgeNetworkTransformer implements IClassTransformer {
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
-        if(name.equals("net.minecraftforge.fml.common.network.handshake.NetworkDispatcher")) {
+        if (name.equals("net.minecraftforge.fml.common.network.handshake.NetworkDispatcher")) {
             try {
                 final ClassNode classNode = ClassUtils.toClassNode(basicClass);
 
@@ -43,12 +43,12 @@ public class ForgeNetworkTransformer implements IClassTransformer {
                 });
 
                 return ClassUtils.toBytes(classNode);
-            }catch(final Throwable throwable) {
+            } catch (final Throwable throwable) {
                 throwable.printStackTrace();
             }
         }
 
-        if(name.equals("net.minecraftforge.fml.common.network.handshake.HandshakeMessageHandler")) {
+        if (name.equals("net.minecraftforge.fml.common.network.handshake.HandshakeMessageHandler")) {
             try {
                 final ClassNode classNode = ClassUtils.toClassNode(basicClass);
 
@@ -56,7 +56,7 @@ public class ForgeNetworkTransformer implements IClassTransformer {
                     final LabelNode labelNode = new LabelNode();
 
                     methodNode.instructions.insertBefore(methodNode.instructions.getFirst(), NodeUtils.toNodes(
-                            new MethodInsnNode(INVOKESTATIC, thePath,"returnMethod", "()Z", false),
+                            new MethodInsnNode(INVOKESTATIC, thePath, "returnMethod", "()Z", false),
                             new JumpInsnNode(IFEQ, labelNode),
                             new InsnNode(RETURN),
                             labelNode
@@ -64,7 +64,7 @@ public class ForgeNetworkTransformer implements IClassTransformer {
                 });
 
                 return ClassUtils.toBytes(classNode);
-            }catch(final Throwable throwable) {
+            } catch (final Throwable throwable) {
                 throwable.printStackTrace();
             }
         }

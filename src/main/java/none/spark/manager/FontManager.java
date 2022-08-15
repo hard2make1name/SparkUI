@@ -11,9 +11,9 @@ import java.util.HashMap;
 
 public class FontManager {
     // TODO 需要优化
-    public File fontDir;
-    public HashMap<String, FontRenderer> fontRenderers;
-    public ArrayList<GlyphPool> substituteGlyphPools;
+    public final File fontDir;
+    public final HashMap<String, FontRenderer> fontRenderers;
+    public final ArrayList<GlyphPool> substituteGlyphPools;
 
     public FontManager(File fontDir) {
         this.fontDir = fontDir;

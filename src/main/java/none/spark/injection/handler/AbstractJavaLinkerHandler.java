@@ -1,4 +1,3 @@
-
 package none.spark.injection.handler;
 
 import none.spark.injection.remapper.Remapper;

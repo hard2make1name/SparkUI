@@ -26,7 +26,7 @@ public final class ExternalUtils {
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringselection, null);
     }
 
-    public static InputStream getResourceInputStream(String resourcePath) throws IOException {
+    public static InputStream getResourceInputStream(String resourcePath) {
         return Class.class.getResourceAsStream(resourcePath);
     }
 }

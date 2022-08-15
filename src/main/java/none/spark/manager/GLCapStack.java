@@ -5,9 +5,9 @@ import org.lwjgl.opengl.GL11;
 import java.util.LinkedList;
 
 public final class GLCapStack {
-    public static LinkedList<Integer> capNameStack = new LinkedList<>();
-    public static LinkedList<Boolean> capStateStack = new LinkedList<>();
-    public static LinkedList<Integer> capNumberStack = new LinkedList<>();
+    public static final LinkedList<Integer> capNameStack = new LinkedList<>();
+    public static final LinkedList<Boolean> capStateStack = new LinkedList<>();
+    public static final LinkedList<Integer> capNumberStack = new LinkedList<>();
 
     // Why GL11.glPushAttrib() and GL11.glPopAttrib() doesn't work ???
     // Then I made it.

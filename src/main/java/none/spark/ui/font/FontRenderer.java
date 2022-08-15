@@ -10,7 +10,7 @@ import java.awt.*;
 
 // GG
 public class FontRenderer {
-    public GlyphPool glyphPool;
+    public final GlyphPool glyphPool;
     public boolean substitute;
 
     public FontRenderer(Font font) {

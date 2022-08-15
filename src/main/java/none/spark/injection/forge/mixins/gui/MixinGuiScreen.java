@@ -1,10 +1,7 @@
 package none.spark.injection.forge.mixins.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.IChatComponent;
 import none.spark.Statics;
 import none.spark.event.events.CommandEvent;
 import none.spark.ui.UIStatics;
@@ -15,8 +12,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.List;
 
 @Mixin(GuiScreen.class)
 public abstract class MixinGuiScreen {

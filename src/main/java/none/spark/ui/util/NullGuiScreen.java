@@ -8,8 +8,8 @@ public class NullGuiScreen extends GuiScreen {
 
     public static final Minecraft mc = Minecraft.getMinecraft();
 
-    public boolean guiPauseGame;
-    public boolean exitByKeyEscape;
+    public final boolean guiPauseGame;
+    public final boolean exitByKeyEscape;
 
     public NullGuiScreen() {
         this.guiPauseGame = false;

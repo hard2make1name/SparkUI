@@ -5,9 +5,9 @@ import java.util.HashMap;
 
 public class FileManager {
 
-    public File root;
+    public final File root;
 
-    public HashMap<String, File> dirs;
+    public final HashMap<String, File> dirs;
 
     public FileManager(File root) {
         this.root = root;
