@@ -34,7 +34,6 @@ public abstract class MixinMinecraft {
         if (icon != null) {
             Display.setIcon(icon);
             callbackInfo.cancel();
-
         }
     }
 

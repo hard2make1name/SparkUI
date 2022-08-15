@@ -14,10 +14,17 @@ public final class IconUtils {
     public static final String ICON_32X_PATH = "/icon_32x32.png";
 
     public static ByteBuffer[] getIconByteBuffer() {
-        return new ByteBuffer[]{
+
+        ByteBuffer[] buffers = new ByteBuffer[]{
                 readImageToBuffer(ExternalUtils.getResourceInputStream(ICON_16X_PATH)),
                 readImageToBuffer(ExternalUtils.getResourceInputStream(ICON_32X_PATH))
         };
+
+        if (buffers[0] != null && buffers[1] != null) {
+            return buffers;
+        }else{
+            return null;
+        }
     }
 
     public static ByteBuffer readImageToBuffer(final InputStream imageStream) {
@@ -39,6 +46,7 @@ public final class IconUtils {
     }
 
     public static ByteBuffer readImageToBuffer(final BufferedImage bufferedImage) {
+        Objects.requireNonNull(bufferedImage);
         int[] rgb = bufferedImage.getRGB(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), null, 0, bufferedImage.getWidth());
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * rgb.length);
         for (int i : rgb) {

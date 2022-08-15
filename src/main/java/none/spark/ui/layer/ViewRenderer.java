@@ -169,13 +169,13 @@ public class ViewRenderer {
             }
             if (!isSelectionEndCaught) {
                 // the cursor down on the textView at last, but not touch any character
-                if (mouseEndPosX > lineWidthList.get(selectionEndLine) || mouseEndPosY > lineCount*lineHeight) {
+                if (mouseEndPosX > lineWidthList.get(selectionEndLine) || mouseEndPosY > lineCount * lineHeight) {
                     selectionEndPosX = lineWidthList.get(selectionEndLine);
                     textField.selectionEndIndex = lineLastIndexList.get(selectionEndLine);
                 }
             }
         }
-        System.out.print(textField.selectionBeginIndex+"|"+textField.selectionEndIndex+"\n");
+        //System.out.print(textField.selectionBeginIndex + "|" + textField.selectionEndIndex + "\n");
 
         // render text selection :)
         int lineDiff = selectionEndLine - selectionBeginLine;
@@ -185,58 +185,59 @@ public class ViewRenderer {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        RenderUtils.awtColor(textField.selectionColor);
-        if (lineDiff > 0) {
-            RenderUtils.drawRect(
-                    textField.posX + selectionBeginPosX,
-                    textField.posY + lineHeight * selectionBeginLine,
-                    textField.posX + lineWidthList.get(selectionBeginLine),
-                    textField.posY + lineHeight * (selectionBeginLine + 1)
-            );
-            for (int i = selectionBeginLine + 1; i < selectionEndLine; i++) {
+        if (textField.selectable) {
+            RenderUtils.awtColor(textField.selectionColor);
+            if (lineDiff > 0) {
+                RenderUtils.drawRect(
+                        textField.posX + selectionBeginPosX,
+                        textField.posY + lineHeight * selectionBeginLine,
+                        textField.posX + lineWidthList.get(selectionBeginLine),
+                        textField.posY + lineHeight * (selectionBeginLine + 1)
+                );
+                for (int i = selectionBeginLine + 1; i < selectionEndLine; i++) {
+                    RenderUtils.drawRect(
+                            textField.posX,
+                            textField.posY + lineHeight * i,
+                            textField.posX + lineWidthList.get(i),
+                            textField.posY + lineHeight * (i + 1)
+                    );
+                }
                 RenderUtils.drawRect(
                         textField.posX,
-                        textField.posY + lineHeight * i,
-                        textField.posX + lineWidthList.get(i),
-                        textField.posY + lineHeight * (i + 1)
+                        textField.posY + lineHeight * selectionEndLine,
+                        textField.posX + selectionEndPosX,
+                        textField.posY + lineHeight * (selectionEndLine + 1)
                 );
-            }
-            RenderUtils.drawRect(
-                    textField.posX,
-                    textField.posY + lineHeight * selectionEndLine,
-                    textField.posX + selectionEndPosX,
-                    textField.posY + lineHeight * (selectionEndLine + 1)
-            );
-        } else if (lineDiff < 0) {
-            RenderUtils.drawRect(
-                    textField.posX,
-                    textField.posY + lineHeight * selectionBeginLine,
-                    textField.posX + selectionBeginPosX,
-                    textField.posY + lineHeight * (selectionBeginLine + 1)
-            );
-            for (int i = selectionEndLine + 1; i < selectionBeginLine; i++) {
+            } else if (lineDiff < 0) {
                 RenderUtils.drawRect(
                         textField.posX,
-                        textField.posY + lineHeight * i,
-                        textField.posX + lineWidthList.get(i),
-                        textField.posY + lineHeight * (i + 1)
+                        textField.posY + lineHeight * selectionBeginLine,
+                        textField.posX + selectionBeginPosX,
+                        textField.posY + lineHeight * (selectionBeginLine + 1)
+                );
+                for (int i = selectionEndLine + 1; i < selectionBeginLine; i++) {
+                    RenderUtils.drawRect(
+                            textField.posX,
+                            textField.posY + lineHeight * i,
+                            textField.posX + lineWidthList.get(i),
+                            textField.posY + lineHeight * (i + 1)
+                    );
+                }
+                RenderUtils.drawRect(
+                        textField.posX + selectionEndPosX,
+                        textField.posY + lineHeight * selectionEndLine,
+                        textField.posX + lineWidthList.get(selectionEndLine),
+                        textField.posY + lineHeight * (selectionEndLine + 1)
+                );
+            } else {
+                RenderUtils.drawRect(
+                        textField.posX + selectionBeginPosX,
+                        textField.posY + lineHeight * selectionBeginLine,
+                        textField.posX + selectionEndPosX,
+                        textField.posY + lineHeight * (selectionBeginLine + 1)
                 );
             }
-            RenderUtils.drawRect(
-                    textField.posX + selectionEndPosX,
-                    textField.posY + lineHeight * selectionEndLine,
-                    textField.posX + lineWidthList.get(selectionEndLine),
-                    textField.posY + lineHeight * (selectionEndLine + 1)
-            );
-        } else {
-            RenderUtils.drawRect(
-                    textField.posX + selectionBeginPosX,
-                    textField.posY + lineHeight * selectionBeginLine,
-                    textField.posX + selectionEndPosX,
-                    textField.posY + lineHeight * (selectionBeginLine + 1)
-            );
         }
-
         if (textField.showCursor) {
             GL11.glColor4f(0, 1, 0, 1);
             GL11.glLineWidth(2f);
@@ -258,6 +259,7 @@ public class ViewRenderer {
                     textField.posY + textField.height
             );
         }
+
 
         GLCapStack.pop();
         if (!textField.debugNotScissor) {
