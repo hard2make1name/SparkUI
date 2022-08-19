@@ -130,15 +130,17 @@ public class ViewRenderer {
                     isSelectionBeginCaught = true;
                 }
                 // catch the ending of cursor
-                if (
-                        !isSelectionEndCaught &&
-                                lineCount == selectionEndLine &&
-                                mouseEndPosX >= lineWidth - finalGlyph.width / 2f &&
-                                mouseEndPosX < lineWidth + finalGlyph.width / 2f
-                ) {
-                    selectionEndPosX = lineWidth;
-                    textField.selectionEndIndex = indexCount;
-                    isSelectionEndCaught = true;
+                if (!isSelectionEndCaught && lineCount == selectionEndLine) {
+                    if (mouseEndPosX >= lineWidth - finalGlyph.width / 2f && mouseEndPosX < lineWidth + finalGlyph.width / 2f) {
+                        selectionEndPosX = lineWidth;
+                        textField.selectionEndIndex = indexCount;
+                        isSelectionEndCaught = true;
+                    } else if (mouseEndPosX >= lineWidth + finalGlyph.width / 2f && mouseEndPosX < lineWidth + finalGlyph.width * 1.5f) {
+                        selectionEndPosX = lineWidth + finalGlyph.width;
+                        textField.selectionEndIndex = indexCount + 1;
+                        isSelectionEndCaught = true;
+                    }
+
                 }
             }
 
